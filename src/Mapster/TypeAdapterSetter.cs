@@ -237,6 +237,14 @@ namespace Mapster
             setter.Settings.GetMemberNames.Add(func);
             return setter;
         }
+
+        public static TSetter NameMatchingStrategy<TSetter>(this TSetter setter, NameMatchingStrategy value) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            setter.Settings.NameMatchingStrategy = value;
+            return setter;
+        }
     }
 
     public class TypeAdapterSetter<TDestination> : TypeAdapterSetter
