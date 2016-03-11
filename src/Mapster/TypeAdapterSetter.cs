@@ -237,6 +237,14 @@ namespace Mapster
             setter.Settings.GetMemberNames.Add(func);
             return setter;
         }
+
+        public static TSetter ValueAccessStrategy<TSetter>(this TSetter setter, Func<Expression, IMemberModel, CompileArgument, Expression> value) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            setter.Settings.ValueAccessingStrategies.Add(value);
+            return setter;
+        }
     }
 
     public class TypeAdapterSetter<TDestination> : TypeAdapterSetter
