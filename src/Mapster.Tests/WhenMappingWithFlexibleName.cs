@@ -88,6 +88,19 @@ namespace Mapster.Tests
             NameMatchingStrategy.PascalCase("__MixMIXMix_mix").ShouldBe("MixMixMixMix");
         }
 
+        [Test]
+        public void Test_Name()
+        {
+            NameMatchingStrategy.ToPascalCase("PascalCase").ShouldEqual("PascalCase");
+            NameMatchingStrategy.ToPascalCase("camelCase").ShouldEqual("CamelCase");
+            NameMatchingStrategy.ToPascalCase("lower_case").ShouldEqual("LowerCase");
+            NameMatchingStrategy.ToPascalCase("UPPER_CASE").ShouldEqual("UpperCase");
+            NameMatchingStrategy.ToPascalCase("IPAddress").ShouldEqual("IpAddress");
+            NameMatchingStrategy.ToPascalCase("ItemID").ShouldEqual("ItemId");
+            NameMatchingStrategy.ToPascalCase("__under__SCORE__").ShouldEqual("UnderScore");
+            NameMatchingStrategy.ToPascalCase("__MixMIXMix_mix").ShouldEqual("MixMixMixMix");
+        }
+
         public class MixName
         {
             public string PascalCase { get; set; }
