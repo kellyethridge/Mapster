@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using NUnit.Framework;
 
 namespace Mapster.Tests
@@ -7,11 +8,27 @@ namespace Mapster.Tests
     {
         [TearDown]
         public void TearDown()
+=======
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Shouldly;
+
+namespace Mapster.Tests
+{
+    [TestClass]
+    public class WhenMappingDerived
+    {
+        [TestCleanup]
+        public void TestCleanup()
+>>>>>>> refs/remotes/MapsterMapper/master
         {
             TypeAdapterConfig.GlobalSettings.Clear();
         }
 
+<<<<<<< HEAD
         [Test]
+=======
+        [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void WhenCompilingConfigDerivedWithoutMembers()
         {
             //Arrange
@@ -21,10 +38,17 @@ namespace Mapster.Tests
                                                            ;
 
             //Act && Assert
+<<<<<<< HEAD
             Assert.DoesNotThrow(() => config.Compile());
         }
 
         [Test]
+=======
+            Should.NotThrow(() => config.Compile());
+        }
+
+        [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void WhenMappingDerivedWithoutMembers()
         {
             //Arrange
@@ -43,7 +67,11 @@ namespace Mapster.Tests
             Assert.AreEqual(inputEntity.Id, result.Id);
         }
 
+<<<<<<< HEAD
         private class BaseDto
+=======
+        internal class BaseDto
+>>>>>>> refs/remotes/MapsterMapper/master
         {
             public long Id { get; set; }
 
@@ -53,12 +81,20 @@ namespace Mapster.Tests
             }
         }
 
+<<<<<<< HEAD
         private class Entity
+=======
+        internal class Entity
+>>>>>>> refs/remotes/MapsterMapper/master
         {
             public long Id { get; set; }
         }
 
+<<<<<<< HEAD
         private class DerivedDto : BaseDto
+=======
+        internal class DerivedDto : BaseDto
+>>>>>>> refs/remotes/MapsterMapper/master
         {
             public DerivedDto(long id) : base(id) { }
         }

@@ -1,55 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
+<<<<<<< HEAD
 using NUnit.Framework;
+=======
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class WhenPerformingDestinationTransforms
     {
-        [TearDown]
-        public void TearDown()
+        [TestCleanup]
+        public void TestCleanup()
         {
             TypeAdapterConfig.GlobalSettings.Default.Settings.DestinationTransforms.Clear();
         }
 
-        [Test]
+        [TestMethod]
         public void Transform_Doesnt_Occur_If_None_Present()
         {
             TypeAdapterConfig<string, string>.Clear();
             TypeAdapterConfig<SimplePoco, SimpleDto>.Clear();
 
-            var source = new SimplePoco { Id = new Guid(), Name = "Test    " };
+            var source = new SimplePoco { Id = new Guid(), Name = "TestMethod    " };
 
             var destination = TypeAdapter.Adapt<SimpleDto>(source);
 
             destination.Name.ShouldBe(source.Name);
         }
 
-        [Test]
+        [TestMethod]
         public void Global_Destination_Transform_Is_Applied_To_Class()
         {
             TypeAdapterConfig.GlobalSettings.Default.AddDestinationTransform((string x) => x.Trim());
             TypeAdapterConfig<string, string>.Clear();
 
-            var source = new SimplePoco {Id = new Guid(), Name = "Test    "};
+            var source = new SimplePoco {Id = new Guid(), Name = "TestMethod"};
             var destination = TypeAdapter.Adapt<SimpleDto>(source);
 
+<<<<<<< HEAD
             destination.Name.ShouldBe("Test");
+=======
+            destination.Name.ShouldBe("TestMethod");
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
-        [Test]
+        [TestMethod]
         public void Adapter_Destination_Transform_Is_Applied_To_Class()
         {
             var config = TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig();
             config.AddDestinationTransform((string x) => x.Trim());
             config.Compile();
 
-            var source = new SimplePoco { Id = new Guid(), Name = "Test    " };
-            var destination = TypeAdapter.Adapt<SimpleDto>(source);
+            var source = new SimplePoco { Id = new Guid(), Name = "TestMethod    " };
+            var destination = TypeAdapter.Adapt<SimplePoco, SimpleDto>(source);
 
+<<<<<<< HEAD
             destination.Name.ShouldBe("Test");
+=======
+            destination.Name.ShouldBe("TestMethod");
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
 
@@ -64,7 +76,7 @@ namespace Mapster.Tests
         public class SimpleDto
         {
             public Guid Id { get; set; }
-            public string Name { get; protected set; }
+            public string Name { get; internal set; }
         }
 
         public class ChildPoco
@@ -92,7 +104,7 @@ namespace Mapster.Tests
             public Guid Id { get; set; }
             public string Name { get; set; }
 
-            public IReadOnlyList<ChildDto> Children { get; protected set; }
+            public IReadOnlyList<ChildDto> Children { get; internal set; }
         }
 
         #endregion

@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+<<<<<<< HEAD
 using NUnit.Framework;
+=======
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class WhenAddingCustomMappings
     {
-        [Test]
+        [TestMethod]
         public void Property_Is_Mapped_To_Different_Property_Successfully()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()
@@ -24,7 +28,7 @@ namespace Mapster.Tests
             dto.AnotherName.ShouldBe(poco.Name);
         }
 
-        [Test]
+        [TestMethod]
         public void Property_Is_Mapped_From_Null_Value_Successfully()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()
@@ -81,7 +85,7 @@ namespace Mapster.Tests
             public Guid Id { get; set; }
             public string Name { get; set; }
 
-            public IReadOnlyList<ChildDto> Children { get; protected set; }
+            public IReadOnlyList<ChildDto> Children { get; internal set; }
         }
 
         #endregion

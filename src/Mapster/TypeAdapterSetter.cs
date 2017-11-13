@@ -1,5 +1,8 @@
 ﻿using System;
+<<<<<<< HEAD
 using System.Linq;
+=======
+>>>>>>> refs/remotes/MapsterMapper/master
 using System.Linq.Expressions;
 using System.Reflection;
 using Mapster.Adapters;
@@ -10,11 +13,16 @@ namespace Mapster
     public class TypeAdapterSetter
     {
         public readonly TypeAdapterSettings Settings;
+<<<<<<< HEAD
         public readonly TypeAdapterConfig ParentConfig;
         public TypeAdapterSetter(TypeAdapterSettings settings, TypeAdapterConfig parentConfig)
+=======
+        public readonly TypeAdapterConfig Config;
+        public TypeAdapterSetter(TypeAdapterSettings settings, TypeAdapterConfig config)
+>>>>>>> refs/remotes/MapsterMapper/master
         {
             this.Settings = settings;
-            this.ParentConfig = parentConfig;
+            this.Config = config;
         }
     }
     public static class TypeAdapterSetterExtensions
@@ -39,7 +47,11 @@ namespace Mapster
 
             foreach (var name in names)
             {
+<<<<<<< HEAD
                 setter.Settings.IgnoreMembers[name] = null;
+=======
+                setter.Settings.IgnoreIfs[name] = null;
+>>>>>>> refs/remotes/MapsterMapper/master
             }
             return setter;
         }
@@ -48,7 +60,41 @@ namespace Mapster
         {
             setter.CheckCompiled();
 
+<<<<<<< HEAD
             setter.Settings.IgnoreAttributes.UnionWith(types);
+=======
+            foreach (var type in types)
+            {
+                setter.Settings.ShouldMapMember.Add((member, _) => member.HasCustomAttribute(type) ? (bool?)false : null);
+            }
+            return setter;
+        }
+
+        public static TSetter IncludeAttribute<TSetter>(this TSetter setter, params Type[] types) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            foreach (var type in types)
+            {
+                setter.Settings.ShouldMapMember.Add((member, _) => member.HasCustomAttribute(type) ? (bool?)true : null);
+            }
+            return setter;
+        }
+
+        public static TSetter IgnoreMember<TSetter>(this TSetter setter, Func<IMemberModel, MemberSide, bool> predicate) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            setter.Settings.ShouldMapMember.Add((member, side) => predicate(member, side) ? (bool?)false : null);
+            return setter;
+        }
+
+        public static TSetter IncludeMember<TSetter>(this TSetter setter, Func<IMemberModel, MemberSide, bool> predicate) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            setter.Settings.ShouldMapMember.Add((member, side) => predicate(member, side) ? (bool?)true : null);
+>>>>>>> refs/remotes/MapsterMapper/master
             return setter;
         }
 
@@ -57,6 +103,14 @@ namespace Mapster
             setter.CheckCompiled();
 
             setter.Settings.ShallowCopyForSameType = value;
+            return setter;
+        }
+
+        public static TSetter EnumMappingStrategy<TSetter>(this TSetter setter, EnumMappingStrategy strategy) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            setter.Settings.MapEnumByName = strategy == Mapster.EnumMappingStrategy.ByName;
             return setter;
         }
 
@@ -76,11 +130,132 @@ namespace Mapster
             return setter;
         }
 
-        public static TSetter NoInherit<TSetter>(this TSetter setter, bool value) where TSetter : TypeAdapterSetter
+        public static TSetter NameMatchingStrategy<TSetter>(this TSetter setter, NameMatchingStrategy value) where TSetter : TypeAdapterSetter
         {
             setter.CheckCompiled();
 
+<<<<<<< HEAD
             setter.Settings.NoInherit = value;
+=======
+            setter.Settings.NameMatchingStrategy = value;
+            return setter;
+        }
+
+        public static TSetter Map<TSetter, TSourceMember>(
+            this TSetter setter, string memberName,
+            Expression<Func<TSourceMember>> source) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            var invoker = Expression.Lambda(source.Body, Expression.Parameter(typeof(object)));
+            setter.Settings.Resolvers.Add(new InvokerModel
+            {
+                DestinationMemberName = memberName,
+                Invoker = invoker,
+                Condition = null
+            });
+            setter.Settings.ShouldMapMember.Add((member, side) => 
+                (member.Name == memberName && side == MemberSide.Destination)
+                ? (bool?)true 
+                : null);
+
+            return setter;
+        }
+
+        public static TSetter Map<TSetter, TSource, TSourceMember>(
+            this TSetter setter, string memberName,
+            Expression<Func<TSource, TSourceMember>> source) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            setter.Settings.Resolvers.Add(new InvokerModel
+            {
+                DestinationMemberName = memberName,
+                Invoker = source,
+                SourceMemberName = ReflectionUtils.GetMemberInfo(source, true)?.Member.Name,
+                Condition = null
+            });
+            setter.Settings.ShouldMapMember.Add((member, side) =>
+                (member.Name == memberName && side == MemberSide.Destination)
+                ? (bool?)true
+                : null);
+
+            return setter;
+        }
+
+        public static TSetter Map<TSetter>(
+            this TSetter setter, string destinationMemberName, string sourceMemberName) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            setter.Settings.Resolvers.Add(new InvokerModel
+            {
+                DestinationMemberName = destinationMemberName,
+                SourceMemberName = sourceMemberName,
+                Condition = null
+            });
+            if (sourceMemberName != destinationMemberName)
+            {
+                setter.Settings.ShouldMapMember.Add((member, side) =>
+                    (member.Name == destinationMemberName && side == MemberSide.Destination)
+                    ? (bool?)true
+                    : null);
+                setter.Settings.ShouldMapMember.Add((member, side) =>
+                   (member.Name == sourceMemberName && side == MemberSide.Source)
+                   ? (bool?)true
+                   : null);
+            }
+            else
+            {
+                setter.Settings.ShouldMapMember.Add((member, _) =>
+                    member.Name == destinationMemberName
+                    ? (bool?)true
+                    : null);
+            }
+
+            return setter;
+        }
+
+        public static TSetter EnableNonPublicMembers<TSetter>(this TSetter setter, bool value) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            if (value)
+            {
+                setter.Settings.ShouldMapMember.Remove(ShouldMapMember.AllowPublic);
+                setter.Settings.ShouldMapMember.Add(ShouldMapMember.AllowNonPublic);
+            }
+            else
+            {
+                setter.Settings.ShouldMapMember.Remove(ShouldMapMember.AllowNonPublic);
+                setter.Settings.ShouldMapMember.Add(ShouldMapMember.AllowPublic);
+            }
+
+            return setter;
+        }
+
+        public static TSetter IgnoreNonMapped<TSetter>(this TSetter setter, bool value) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            setter.Settings.IgnoreNonMapped = value;
+            return setter;
+        }
+
+        public static TSetter AvoidInlineMapping<TSetter>(this TSetter setter, bool value) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            setter.Settings.AvoidInlineMapping = value;
+            return setter;
+        }
+
+        public static TSetter GetMemberName<TSetter>(this TSetter setter, Func<IMemberModel, string> func) where TSetter : TypeAdapterSetter
+        {
+            setter.CheckCompiled();
+
+            setter.Settings.GetMemberNames.Add(func);
+>>>>>>> refs/remotes/MapsterMapper/master
             return setter;
         }
 
@@ -105,7 +280,11 @@ namespace Mapster
 
             foreach (var member in members)
             {
+<<<<<<< HEAD
                 Settings.IgnoreMembers[ReflectionUtils.GetMemberInfo(member).Member.Name] = null;
+=======
+                Settings.IgnoreIfs[ReflectionUtils.GetMemberInfo(member).Member.Name] = null;
+>>>>>>> refs/remotes/MapsterMapper/master
             }
             return this;
         }
@@ -117,16 +296,47 @@ namespace Mapster
             this.CheckCompiled();
 
             var memberExp = ReflectionUtils.GetMemberInfo(member);
+<<<<<<< HEAD
             var invoker = Expression.Lambda(source.Body, Expression.Parameter(typeof (object)), source.Parameters[0]);
             Settings.Resolvers.Add(new InvokerModel
             {
                 MemberName = memberExp.Member.Name,
+=======
+            var invoker = Expression.Lambda(source.Body, Expression.Parameter(typeof (object)));
+            Settings.Resolvers.Add(new InvokerModel
+            {
+                DestinationMemberName = memberExp.Member.Name,
+>>>>>>> refs/remotes/MapsterMapper/master
                 Invoker = invoker,
                 Condition = null
             });
             return this;
         }
 
+<<<<<<< HEAD
+=======
+        public TypeAdapterSetter<TDestination> Map<TDestinationMember>(
+            Expression<Func<TDestination, TDestinationMember>> destinationMember,
+            string sourceMemberName)
+        {
+            this.CheckCompiled();
+
+            var memberExp = ReflectionUtils.GetMemberInfo(destinationMember);
+            Settings.Resolvers.Add(new InvokerModel
+            {
+                DestinationMemberName = memberExp.Member.Name,
+                SourceMemberName = sourceMemberName,
+                Condition = null
+            });
+            Settings.ShouldMapMember.Add((member, side) =>
+                (member.Name == sourceMemberName && side == MemberSide.Source)
+                ? (bool?)true
+                : null);
+
+            return this;
+        }
+
+>>>>>>> refs/remotes/MapsterMapper/master
         public TypeAdapterSetter<TDestination> ConstructUsing(Expression<Func<TDestination>> constructUsing)
         {
             this.CheckCompiled();
@@ -160,12 +370,53 @@ namespace Mapster
             : base(settings, parentConfig)
         { }
 
+<<<<<<< HEAD
         public new TypeAdapterSetter<TSource, TDestination> Ignore(params Expression<Func<TDestination, object>>[] members)
         {
+=======
+        #region replace for chaining
+
+        public new TypeAdapterSetter<TSource, TDestination> Ignore(params Expression<Func<TDestination, object>>[] members)
+        {
+            return (TypeAdapterSetter<TSource, TDestination>)base.Ignore(members);
+        }
+
+        public  new TypeAdapterSetter<TSource, TDestination> Map<TDestinationMember, TSourceMember>(
+            Expression<Func<TDestination, TDestinationMember>> member,
+            Expression<Func<TSourceMember>> source)
+        {
+            return (TypeAdapterSetter<TSource, TDestination>)base.Map(member, source);
+        }
+
+        public new TypeAdapterSetter<TSource, TDestination> Map<TDestinationMember>(
+            Expression<Func<TDestination, TDestinationMember>> destinationMember,
+            string sourceMemberName)
+        {
+            return (TypeAdapterSetter<TSource, TDestination>)base.Map(destinationMember, sourceMemberName);
+        }
+
+        public new TypeAdapterSetter<TSource, TDestination> ConstructUsing(Expression<Func<TDestination>> constructUsing)
+        {
+            return (TypeAdapterSetter<TSource, TDestination>)base.ConstructUsing(constructUsing);
+        }
+
+        public new TypeAdapterSetter<TSource, TDestination> AfterMapping(Action<TDestination> action)
+        {
+            return (TypeAdapterSetter<TSource, TDestination>)base.AfterMapping(action);
+        }
+
+        #endregion
+
+        public TypeAdapterSetter<TSource, TDestination> IgnoreIf(
+            Expression<Func<TSource, TDestination, bool>> condition,
+            params Expression<Func<TDestination, object>>[] members)
+        {
+>>>>>>> refs/remotes/MapsterMapper/master
             this.CheckCompiled();
 
             foreach (var member in members)
             {
+<<<<<<< HEAD
                 Settings.IgnoreMembers[ReflectionUtils.GetMemberInfo(member).Member.Name] = null;
             }
             return this;
@@ -191,12 +442,58 @@ namespace Mapster
             this.CheckCompiled();
 
             var memberExp = ReflectionUtils.GetMemberInfo(member);
+=======
+                var name = ReflectionUtils.GetMemberInfo(member).Member.Name;
+                Settings.IgnoreIfs.Merge(name, condition);
+            }
+            return this;
+        }
+
+        public TypeAdapterSetter<TSource, TDestination> IgnoreIf(
+            Expression<Func<TSource, TDestination, bool>> condition,
+            params string[] members)
+        {
+            this.CheckCompiled();
+
+            foreach (var member in members)
+            {
+                Settings.IgnoreIfs.Merge(member, condition);
+            }
+            return this;
+        }
+
+        public TypeAdapterSetter<TSource, TDestination> Map<TDestinationMember, TSourceMember>(
+            Expression<Func<TDestination, TDestinationMember>> member,
+            Expression<Func<TSource, TSourceMember>> source, Expression<Func<TSource, bool>> shouldMap = null)
+        {
+            this.CheckCompiled();
+
+            var memberExp = ReflectionUtils.GetMemberInfo(member);
             Settings.Resolvers.Add(new InvokerModel
             {
-                MemberName = memberExp.Member.Name,
+                DestinationMemberName = memberExp.Member.Name,
                 Invoker = source,
+                SourceMemberName = ReflectionUtils.GetMemberInfo(source, true)?.Member.Name,
                 Condition = shouldMap
             });
+            return this;
+        }
+
+        public TypeAdapterSetter<TSource, TDestination> Map<TSourceMember>(
+            string memberName,
+            Expression<Func<TSource, TSourceMember>> source, Expression<Func<TSource, bool>> shouldMap = null)
+        {
+            this.CheckCompiled();
+            
+>>>>>>> refs/remotes/MapsterMapper/master
+            Settings.Resolvers.Add(new InvokerModel
+            {
+                DestinationMemberName = memberName,
+                Invoker = source,
+                SourceMemberName = ReflectionUtils.GetMemberInfo(source, true)?.Member.Name,
+                Condition = shouldMap
+            });
+<<<<<<< HEAD
             return this;
         }
 
@@ -208,6 +505,12 @@ namespace Mapster
             Settings.ConverterFactory = adapter.CreateAdaptFunc;
             Settings.ConverterToTargetFactory = adapter.CreateAdaptToTargetFunc;
             Settings.ValueAccessingStrategies.Add(ValueAccessingStrategy.NonPublicPropertyOrField);
+=======
+            Settings.ShouldMapMember.Add((member, side) =>
+                (member.Name == memberName && side == MemberSide.Destination)
+                ? (bool?)true
+                : null);
+>>>>>>> refs/remotes/MapsterMapper/master
 
             return this;
         }
@@ -217,30 +520,94 @@ namespace Mapster
             this.CheckCompiled();
 
             Settings.ConstructUsingFactory = arg => constructUsing;
+<<<<<<< HEAD
+=======
 
             return this;
         }
 
-        public TypeAdapterSetter<TSource, TDestination> MapWith(Expression<Func<TSource, TDestination>> converterFactory)
+        public TypeAdapterSetter<TSource, TDestination> MapWith(Expression<Func<TSource, TDestination>> converterFactory, bool applySettings = false)
         {
             this.CheckCompiled();
+
+            if (applySettings)
+            {
+                var adapter = new DelegateAdapter(converterFactory);
+                Settings.ConverterFactory = adapter.CreateAdaptFunc;
+                if (Settings.ConverterToTargetFactory == null)
+                {
+                    Settings.ConverterToTargetFactory = adapter.CreateAdaptToTargetFunc;
+                }
+            }
+            else
+            {
+                Settings.ConverterFactory = arg => converterFactory;
+                if (Settings.ConverterToTargetFactory == null)
+                {
+                    var dest = Expression.Parameter(typeof(TDestination));
+                    Settings.ConverterToTargetFactory = arg => Expression.Lambda(converterFactory.Body, converterFactory.Parameters[0], dest);
+                }
+            }
+>>>>>>> refs/remotes/MapsterMapper/master
+
+            return this;
+        }
+
+        public TypeAdapterSetter<TSource, TDestination> MapToTargetWith(Expression<Func<TSource, TDestination, TDestination>> converterFactory, bool applySettings = false)
+        {
+            this.CheckCompiled();
+<<<<<<< HEAD
 
             Settings.ConverterFactory = arg => converterFactory;
+=======
+>>>>>>> refs/remotes/MapsterMapper/master
 
-            if (Settings.ConverterToTargetFactory == null)
+            if (applySettings)
             {
-                var dest = Expression.Parameter(typeof (TDestination));
-                Settings.ConverterToTargetFactory = arg => Expression.Lambda(converterFactory.Body, converterFactory.Parameters[0], dest);
+                var adapter = new DelegateAdapter(converterFactory);
+                Settings.ConverterToTargetFactory = adapter.CreateAdaptToTargetFunc;
             }
-
+            else
+                Settings.ConverterToTargetFactory = arg => converterFactory;
             return this;
         }
 
-        public TypeAdapterSetter<TSource, TDestination> MapToTargetWith(Expression<Func<TSource, TDestination, TDestination>> converterFactory)
+        public TypeAdapterSetter<TSource, TDestination> AfterMapping(Action<TSource, TDestination> action)
         {
             this.CheckCompiled();
 
+            Settings.AfterMappingFactories.Add(arg =>
+            {
+                var p1 = Expression.Parameter(arg.SourceType);
+                var p2 = Expression.Parameter(arg.DestinationType);
+                var actionType = action.GetType();
+                var actionExp = Expression.Constant(action, actionType);
+                var invoke = Expression.Call(actionExp, "Invoke", null, p1, p2);
+                return Expression.Lambda(invoke, p1, p2);
+            });
+            return this;
+        }
+
+        public TypeAdapterSetter<TSource, TDestination> Include<TDerivedSource, TDerivedDestination>() 
+            where TDerivedSource: class, TSource
+            where TDerivedDestination: class, TDestination
+        {
+            this.CheckCompiled();
+
+<<<<<<< HEAD
             Settings.ConverterToTargetFactory = arg => converterFactory;
+=======
+            Config.Rules.Add(new TypeAdapterRule
+            {
+                Priority = arg =>
+                    arg.SourceType == typeof(TDerivedSource) &&
+                    arg.DestinationType == typeof(TDerivedDestination) ? (int?)100 : null,
+                Settings = Settings
+            });
+
+            Settings.Includes.Add(new TypeTuple(typeof(TDerivedSource), typeof(TDerivedDestination)));
+
+>>>>>>> refs/remotes/MapsterMapper/master
             return this;
         }
 
@@ -273,8 +640,12 @@ namespace Mapster
             if (!baseDestinationType.GetTypeInfo().IsAssignableFrom(typeof(TDestination).GetTypeInfo()))
                 throw new InvalidCastException("In order to use inherits, TDestination must inherit directly or indirectly from TBaseDestination.");
 
+<<<<<<< HEAD
             TypeAdapterRule rule;
             if (ParentConfig.RuleMap.TryGetValue(new TypeTuple(baseSourceType, baseDestinationType), out rule))
+=======
+            if (Config.RuleMap.TryGetValue(new TypeTuple(baseSourceType, baseDestinationType), out var rule))
+>>>>>>> refs/remotes/MapsterMapper/master
             {
                 Settings.Apply(rule.Settings);
             }
@@ -283,7 +654,12 @@ namespace Mapster
 
         public void Compile()
         {
-            this.ParentConfig.Compile(typeof(TSource), typeof(TDestination));
+            this.Config.Compile(typeof(TSource), typeof(TDestination));
+        }
+
+        public void CompileProjection()
+        {
+            this.Config.CompileProjection(typeof(TSource), typeof(TDestination));
         }
 
         public void CompileProjection()

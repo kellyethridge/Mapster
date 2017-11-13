@@ -1,14 +1,18 @@
 ﻿using System;
+<<<<<<< HEAD
 using NUnit.Framework;
+=======
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class WhenUsingRuleBasedSetting
     {
 
-        [Test]
+        [TestMethod]
         public void Rule_Base_Testing()
         {
             TypeAdapterConfig.GlobalSettings.When((srcType, destType, mapType) => srcType == destType)

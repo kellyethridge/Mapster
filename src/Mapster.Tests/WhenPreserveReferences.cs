@@ -1,19 +1,23 @@
 ﻿using System;
+<<<<<<< HEAD
 using NUnit.Framework;
+=======
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class WhenPreserveReference
     {
-        [TearDown]
+        [TestCleanup]
         public void Teardown()
         {
             TypeAdapterConfig.GlobalSettings.Default.Settings.PreserveReference = false;
         }
 
-        [Test]
+        [TestMethod]
         public void Preserve_Reference_For_List()
         {
             TypeAdapterConfig.GlobalSettings.Default.Settings.PreserveReference = true;
@@ -27,7 +31,7 @@ namespace Mapster.Tests
             array2[0].ShouldBeSameAs(array2[1]);
         }
 
-        [Test]
+        [TestMethod]
         public void Preserve_Reference_For_Circular_Reference()
         {
             TypeAdapterConfig.GlobalSettings.Default.Settings.PreserveReference = true;

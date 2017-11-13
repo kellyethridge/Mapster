@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Shouldly;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Mapster.Tests
@@ -35,12 +37,49 @@ namespace Mapster.Tests
         public decimal BClass_Total { get; set; }
     }
 
+    public class ModelObject
+    {
+        public DateTime BaseDate { get; set; }
+
+        public ModelSubObject Sub { get; set; }
+
+        public ModelSubObject Sub2 { get; set; }
+
+        public ModelSubObject SubWithExtraName { get; set; }
+    }
+
+    public class ModelSubObject
+    {
+        public string ProperName { get; set; }
+
+        public ModelSubSubObject SubSub { get; set; }
+    }
+
+    public class ModelSubSubObject
+    {
+        public string CoolProperty { get; set; }
+    }
+
+    public class ModelDto
+    {
+        public DateTime BaseDate { get; set; }
+
+        public string SubProperName { get; set; }
+
+        public string Sub2ProperName { get; set; }
+
+        public string SubWithExtraNameProperName { get; set; }
+
+        public string SubSubSubCoolProperty { get; set; }
+    }
+
+
     #endregion
 
-    [TestFixture]
+    [TestClass]
     public class WhenFlattening
     {
-        [Test]
+        [TestMethod]
         public void GetMethodTest()
         {
             var b = TypeAdapter.Adapt<A, B>(new A { X = 100, Y = 50 });
@@ -49,7 +88,7 @@ namespace Mapster.Tests
             Assert.IsTrue(b.Total == 150);
         }
 
-        [Test]
+        [TestMethod]
         public void PropertyTest()
         {
             var d = TypeAdapter.Adapt<C, D>(new C { BClass = new B { Total = 250 } });
@@ -58,7 +97,7 @@ namespace Mapster.Tests
             Assert.IsTrue(d.BClassTotal == 250);
         }
 
-        [Test]
+        [TestMethod]
         public void PropertyTest_NameWithUnderscore()
         {
             var e = TypeAdapter.Adapt<C, E>(new C { BClass = new B { Total = 250 } });
@@ -66,5 +105,35 @@ namespace Mapster.Tests
             Assert.IsNotNull(e);
             Assert.IsTrue(e.BClass_Total == 250);
         }
+
+        [TestMethod]
+        public void ShouldUseNestedObjectPropertyMembers()
+        {
+            var src = new ModelObject
+            {
+                BaseDate = new DateTime(2007, 4, 5),
+                Sub = new ModelSubObject
+                {
+                    ProperName = "Some name",
+                    SubSub = new ModelSubSubObject
+                    {
+                        CoolProperty = "Cool daddy-o"
+                    }
+                },
+                Sub2 = new ModelSubObject
+                {
+                    ProperName = "Sub 2 name"
+                },
+                SubWithExtraName = new ModelSubObject
+                {
+                    ProperName = "Some other name"
+                },
+            };
+            var dest = src.Adapt<ModelDto>();
+
+            dest.Sub2ProperName.ShouldBe("Sub 2 name");
+            dest.SubWithExtraNameProperName.ShouldBe("Some other name");
+        }
+
     }
 }

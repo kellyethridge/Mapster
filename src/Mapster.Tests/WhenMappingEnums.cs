@@ -1,18 +1,29 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+<<<<<<< HEAD
 using NUnit.Framework;
+=======
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
-    #region Test Objects
+    #region TestMethod Objects
 
     public enum Departments
     {
         Finance = 0,
         IT = 1,
         Sales = 2
+    }
+
+    public enum EmployeeDepartments
+    {
+        Finance = 2,
+        IT = 3,
+        Sales = 4
     }
 
     public class Employee
@@ -30,6 +41,13 @@ namespace Mapster.Tests
         public string Department { get; set; }
     }
 
+    public class EmployeeWithEnum
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public EmployeeDepartments Department { get; set; }
+    }
+
     public class EmployeeDTO
     {
         public Guid Id { get; set; }
@@ -39,10 +57,10 @@ namespace Mapster.Tests
 
     #endregion
 
-    [TestFixture]
+    [TestClass]
     public class WhenMappingEnums
     {
-        [Test]
+        [TestMethod]
         public void Int_Is_Mapped_To_Enum()
         {
             TypeAdapterConfig<Employee, EmployeeDTO>
@@ -59,7 +77,7 @@ namespace Mapster.Tests
                 dto.Department == Departments.IT);
         }
 
-        [Test]
+        [TestMethod]
         public void String_Is_Mapped_To_Enum()
         {
             var employee = new EmployeeWithStringEnum { Id = Guid.NewGuid(), Name = "Timuçin", Department = Departments.IT.ToString() };
@@ -71,9 +89,59 @@ namespace Mapster.Tests
             dto.Id.ShouldBe(employee.Id);
             dto.Name.ShouldBe(employee.Name);
             dto.Department.ShouldBe(Departments.IT);
+<<<<<<< HEAD
+=======
         }
 
-        [Test]
+        [TestMethod]
+        public void String_Is_Mapped_To_Nullable_Enum()
+        {
+            var department = Departments.IT.ToString();
+            var value = TypeAdapter.Adapt<string, Departments?>(department);
+            value.ShouldBe(Departments.IT);
+        }
+
+        [TestMethod]
+        public void Null_String_Is_Mapped_To_Nullable_Enum()
+        {
+            string department = null;
+            var value = TypeAdapter.Adapt<string, Departments?>(department);
+            value.ShouldBeNull();
+        }
+
+        [TestMethod]
+        public void Nullable_Enum_Is_Mapped_To_String()
+        {
+            var department = Departments.IT;
+            var value = TypeAdapter.Adapt<Departments?, string>(department);
+            value.ShouldBe(Departments.IT.ToString());
+        }
+
+        [TestMethod]
+        public void Null_Nullable_Enum_Is_Mapped_To_String()
+        {
+            Departments? department = null;
+            var value = TypeAdapter.Adapt<Departments?, string>(department);
+            value.ShouldBeNull();
+        }
+
+        [TestMethod]
+        public void Enum_Is_Mapped_To_Enum()
+        {
+            var employee = new EmployeeWithEnum { Id = Guid.NewGuid(), Name = "Timuçin", Department = EmployeeDepartments.IT };
+
+            TypeAdapterConfig.GlobalSettings.Default.EnumMappingStrategy(EnumMappingStrategy.ByName);
+            var dto = TypeAdapter.Adapt<EmployeeWithEnum, EmployeeDTO>(employee);
+
+            dto.ShouldNotBeNull();
+
+            dto.Id.ShouldBe(employee.Id);
+            dto.Name.ShouldBe(employee.Name);
+            dto.Department.ShouldBe(Departments.IT);
+>>>>>>> refs/remotes/MapsterMapper/master
+        }
+
+        [TestMethod]
         public void Null_String_Is_Mapped_To_Enum_Default()
         {
             TypeAdapterConfig<EmployeeWithStringEnum, EmployeeDTO>
@@ -90,7 +158,7 @@ namespace Mapster.Tests
             dto.Department.ShouldBe(Departments.Finance);
         }
 
-        [Test]
+        [TestMethod]
         public void Empty_String_Is_Mapped_To_Enum_Default()
         {
             TypeAdapterConfig<EmployeeWithStringEnum, EmployeeDTO>
@@ -108,7 +176,7 @@ namespace Mapster.Tests
 
         }
 
-        [Test]
+        [TestMethod]
         public void Enum_Is_Mapped_To_String()
         {
             var employeeDto = new EmployeeDTO { Id = Guid.NewGuid(), Name = "Timuçin", Department = Departments.IT };
@@ -122,7 +190,7 @@ namespace Mapster.Tests
             poco.Department.ShouldBe(employeeDto.Department.ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Flag_Enum_Is_Supported()
         {
             Assert_Flag_Enum(0, "Zero");
@@ -147,7 +215,7 @@ namespace Mapster.Tests
             e2.ShouldBe(e);
         }
 
-        [Test, Explicit]
+        [TestMethod, TestCategory("speed")]
         public void MapEnumToStringSpeedTest()
         {
             TypeAdapterConfig<EmployeeDTO, EmployeeWithStringEnum>
@@ -165,15 +233,39 @@ namespace Mapster.Tests
             Console.WriteLine("Enum to string Elapsed time ms: " + timer.ElapsedMilliseconds);
         }
 
+        [TestMethod]
+        public void MapEnumToClass()
+        {
+            TypeAdapterConfig<CustomerType, EnumViewModel>.NewConfig()
+                .Map(dest => dest.Text, src => src.ToString())
+                .Map(dest => dest.Value, src => (int)src);
+
+            var e = CustomerType.Private;
+            var result = e.Adapt<EnumViewModel>();
+            result.Value.ShouldBe(1);
+            result.Text.ShouldBe("Private");
+        }
+
         [Flags]
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
-        enum Flags
+        internal enum Flags
         {
             Zero = 0,
             Two = 2,
             Four = 4,
             Six = 6,
             Eight = 8,
+        }
+
+        public enum CustomerType
+        {
+            Company, Private
+        }
+
+        public class EnumViewModel
+        {
+            public int Value { get; set; }
+            public string Text { get; set; }
         }
     }
 }

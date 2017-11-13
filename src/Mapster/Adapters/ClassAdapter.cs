@@ -17,6 +17,7 @@ namespace Mapster.Adapters
     internal class ClassAdapter : BaseClassAdapter
     {
         protected override int Score => -150;
+<<<<<<< HEAD
 
         protected override bool CanMap(Type sourceType, Type destinationType, MapType mapType)
         {
@@ -24,6 +25,15 @@ namespace Mapster.Adapters
                 return false;
 
             if (!destinationType.IsPoco())
+=======
+
+        protected override bool CanMap(PreCompileArgument arg)
+        {
+            var bindingFlags = arg.ExplicitMapping
+                ? BindingFlags.Public | BindingFlags.NonPublic
+                : BindingFlags.Public;
+            if (!arg.DestinationType.IsPoco(bindingFlags))
+>>>>>>> refs/remotes/MapsterMapper/master
                 return false;
 
             return true;
@@ -33,12 +43,32 @@ namespace Mapster.Adapters
         {
             if (!base.CanInline(source, destination, arg))
                 return false;
-            if (arg.MapType != MapType.Projection &&
-                arg.Settings.IgnoreNullValues == true)
+
+<<<<<<< HEAD
+=======
+            if (arg.MapType == MapType.MapToTarget)
+                return false;
+            var constructUsing = arg.Settings.ConstructUsingFactory?.Invoke(arg);
+            if (constructUsing != null &&
+                constructUsing.Body.NodeType != ExpressionType.New &&
+                constructUsing.Body.NodeType != ExpressionType.MemberInit)
+            {
+                if (arg.MapType == MapType.Projection)
+                    throw new InvalidOperationException("ConstructUsing for projection is support only New and MemberInit expression.");
+                return false;
+            }
+
+            //IgnoreIfs, IgnoreNullValue isn't supported by projection
+            if (arg.MapType == MapType.Projection)
+                return true;
+            if (arg.Settings.IgnoreNullValues == true)
+                return false;
+            if (arg.Settings.IgnoreIfs.Any(item => item.Value != null))
                 return false;
             return true;
         }
 
+>>>>>>> refs/remotes/MapsterMapper/master
         protected override Expression CreateBlockExpression(Expression source, Expression destination, CompileArgument arg)
         {
             //### !IgnoreNullValues
@@ -52,25 +82,57 @@ namespace Mapster.Adapters
             //  dest.Prop2 = convert(src.Prop2);
 
             var classConverter = CreateClassConverter(source, destination, arg);
-            var properties = classConverter.Members;
+            var members = classConverter.Members;
 
             var lines = new List<Expression>();
-            foreach (var property in properties)
+            Dictionary<LambdaExpression, List<Expression>> conditions = null;
+            foreach (var member in members)
             {
-                var getter = CreateAdaptExpression(property.Getter, property.Setter.Type, arg);
+                var value = arg.MapType == MapType.MapToTarget
+                    ? CreateAdaptToExpression(member.Getter, member.DestinationMember.GetExpression(destination), arg)
+                    : CreateAdaptExpression(member.Getter, member.DestinationMember.Type, arg);
 
-                Expression itemAssign = Expression.Assign(property.Setter, getter);
-                if (arg.Settings.IgnoreNullValues == true && (!property.Getter.Type.GetTypeInfo().IsValueType || property.Getter.Type.IsNullable()))
+                Expression itemAssign = member.DestinationMember.SetExpression(destination, value);
+                if (arg.Settings.IgnoreNullValues == true && (!member.Getter.Type.GetTypeInfo().IsValueType || member.Getter.Type.IsNullable()))
                 {
-                    var condition = Expression.NotEqual(property.Getter, Expression.Constant(null, property.Getter.Type));
+                    var condition = Expression.NotEqual(member.Getter, Expression.Constant(null, member.Getter.Type));
                     itemAssign = Expression.IfThen(condition, itemAssign);
                 }
 
+<<<<<<< HEAD
                 if (property.SetterCondition != null)
                 {
                     itemAssign = Expression.IfThen(Expression.Not(property.SetterCondition.Apply(source, destination)), itemAssign);
                 }
                 lines.Add(itemAssign);
+=======
+                if (member.SetterCondition != null)
+                {
+                    if (conditions == null)
+                        conditions = new Dictionary<LambdaExpression, List<Expression>>();
+                    if (!conditions.TryGetValue(member.SetterCondition, out List<Expression> pendingAssign))
+                    {
+                        pendingAssign = new List<Expression>();
+                        conditions[member.SetterCondition] = pendingAssign;
+                    }
+                    pendingAssign.Add(itemAssign);
+                }
+                else
+                {
+                    lines.Add(itemAssign);
+                }
+            }
+
+            if (conditions != null)
+            {
+                foreach (var kvp in conditions)
+                {
+                    var condition = Expression.IfThen(
+                        Expression.Not(kvp.Key.Apply(source, destination)),
+                        Expression.Block(kvp.Value));
+                    lines.Add(condition);
+                }
+>>>>>>> refs/remotes/MapsterMapper/master
             }
 
             return lines.Count > 0 ? (Expression)Expression.Block(lines) : Expression.Empty();
@@ -88,43 +150,55 @@ namespace Mapster.Adapters
             var newInstance = memberInit?.NewExpression ?? (NewExpression)exp;
 
             var classConverter = CreateClassConverter(source, newInstance, arg);
-            var properties = classConverter.Members;
+            var members = classConverter.Members;
 
             var lines = new List<MemberBinding>();
             if (memberInit != null)
                 lines.AddRange(memberInit.Bindings);
-            foreach (var property in properties)
+            foreach (var member in members)
             {
-                var getter = CreateAdaptExpression(property.Getter, property.Setter.Type, arg);
+                var value = CreateAdaptExpression(member.Getter, member.DestinationMember.Type, arg);
 
                 //special null property check for projection
                 //if we don't set null to property, EF will create empty object
                 //except collection type & complex type which cannot be null
                 if (arg.MapType == MapType.Projection
+<<<<<<< HEAD
                     && property.Getter.Type != property.Setter.Type
                     && !property.Getter.Type.IsCollection()
                     && !property.Setter.Type.IsCollection()
                     && property.Getter.Type.GetTypeInfo().GetCustomAttributes(true).All(attr => attr.GetType().Name != "ComplexTypeAttribute")
                     && (!property.Getter.Type.GetTypeInfo().IsValueType || property.Getter.Type.IsNullable()))
+=======
+                    && member.Getter.Type != member.DestinationMember.Type
+                    && !member.Getter.Type.IsCollection()
+                    && !member.DestinationMember.Type.IsCollection()
+                    && member.Getter.Type.GetTypeInfo().GetCustomAttributes(true).All(attr => attr.GetType().Name != "ComplexTypeAttribute")
+                    && (!member.Getter.Type.GetTypeInfo().IsValueType || member.Getter.Type.IsNullable()))
+>>>>>>> refs/remotes/MapsterMapper/master
                 {
-                    var compareNull = Expression.Equal(property.Getter, Expression.Constant(null, property.Getter.Type));
-                    getter = Expression.Condition(
+                    var compareNull = Expression.Equal(member.Getter, Expression.Constant(null, member.Getter.Type));
+                    value = Expression.Condition(
                         compareNull,
-                        Expression.Constant(property.Setter.Type.GetDefault(), property.Setter.Type),
-                        getter);
+                        Expression.Constant(member.DestinationMember.Type.GetDefault(), member.DestinationMember.Type),
+                        value);
                 }
-                var bind = Expression.Bind((MemberInfo)property.SetterInfo, getter);
+                var bind = Expression.Bind((MemberInfo)member.DestinationMember.Info, value);
                 lines.Add(bind);
             }
 
             return Expression.MemberInit(newInstance, lines);
         }
 
-        protected override ClassModel GetClassModel(Type destinationType)
+        protected override ClassModel GetClassModel(Type destinationType, CompileArgument arg)
         {
             return new ClassModel
             {
+<<<<<<< HEAD
                 Members = destinationType.GetFieldsAndProperties(allowNoSetter: false)
+=======
+                Members = destinationType.GetFieldsAndProperties(allowNoSetter: false, accessorFlags: BindingFlags.NonPublic | BindingFlags.Public)
+>>>>>>> refs/remotes/MapsterMapper/master
             };
         }
     }

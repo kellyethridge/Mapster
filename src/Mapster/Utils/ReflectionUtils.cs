@@ -8,13 +8,29 @@ using System.Runtime.CompilerServices;
 using Mapster.Models;
 using Mapster.Utils;
 
+// ReSharper disable once CheckNamespace
 namespace Mapster
 {
     internal static class ReflectionUtils
     {
-        private static readonly Type _stringType = typeof (string);
+        // Primitive types with their conversion methods from System.Convert class.
+        private static readonly Dictionary<Type, string> _primitiveTypes = new Dictionary<Type, string>() {
+            { typeof(bool), "ToBoolean" },
+            { typeof(short), "ToInt16" },
+            { typeof(int), "ToInt32" },
+            { typeof(long), "ToInt64" },
+            { typeof(float), "ToSingle" },
+            { typeof(double), "ToDouble" },
+            { typeof(decimal), "ToDecimal" },
+            { typeof(ushort), "ToUInt16" },
+            { typeof(uint), "ToUInt32" },
+            { typeof(ulong), "ToUInt64" },
+            { typeof(byte), "ToByte" },
+            { typeof(sbyte), "ToSByte" },
+            { typeof(DateTime), "ToDateTime" }
+        };
 
-#if NET4
+#if NET40
         public static Type GetTypeInfo(this Type type) {
             return type;
         }
@@ -25,6 +41,7 @@ namespace Mapster
             return type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>);
         }
 
+<<<<<<< HEAD
         public static bool IsPoco(this Type type)
         {
             if (type.GetTypeInfo().IsEnum)
@@ -45,19 +62,54 @@ namespace Mapster
                 .Where(x => (allowNoSetter || !x.IsInitOnly))
                 .Select(CreateModel);
 
+=======
+        public static bool IsPoco(this Type type, BindingFlags accessorFlags = BindingFlags.Public)
+        {
+            //not nullable
+            if (type.IsNullable())
+                return false;
+
+            //not primitives
+            if (type.IsConvertible())
+                return false;
+
+            return type.GetFieldsAndProperties(allowNoSetter: false, accessorFlags: accessorFlags).Any();
+        }
+
+        public static IEnumerable<IMemberModelEx> GetFieldsAndProperties(this Type type, bool allowNoSetter = true, BindingFlags accessorFlags = BindingFlags.Public)
+        {
+            var bindingFlags = BindingFlags.Instance | accessorFlags;
+
+            var properties = type.GetProperties(bindingFlags)
+                .Where(x => allowNoSetter || x.CanWrite)
+                .Select(CreateModel);
+
+            var fields = type.GetFields(bindingFlags)
+                .Where(x => allowNoSetter || !x.IsInitOnly)
+                .Select(CreateModel);
+
+>>>>>>> refs/remotes/MapsterMapper/master
             return properties.Concat(fields);
         }
 
         public static bool IsCollection(this Type type)
         {
-            return typeof (IEnumerable).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()) && type != _stringType;
+            return typeof (IEnumerable).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()) && type != typeof(string);
         }
 
         public static Type ExtractCollectionType(this Type collectionType)
         {
+<<<<<<< HEAD
             var enumerableType = collectionType.GetGenericEnumerableType();
             return enumerableType != null 
                 ? enumerableType.GetGenericArguments()[0] 
+=======
+            if (collectionType.IsArray)
+                return collectionType.GetElementType();
+            var enumerableType = collectionType.GetGenericEnumerableType();
+            return enumerableType != null
+                ? enumerableType.GetGenericArguments()[0]
+>>>>>>> refs/remotes/MapsterMapper/master
                 : typeof (object);
         }
 
@@ -70,7 +122,11 @@ namespace Mapster
         {
             if (predicate(type))
                 return type;
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> refs/remotes/MapsterMapper/master
             return type.GetInterfaces().FirstOrDefault(predicate);
         }
 
@@ -79,8 +135,17 @@ namespace Mapster
             return type.GetInterface(IsGenericEnumerableType);
         }
 
+<<<<<<< HEAD
         private static Expression CreateConvertMethod(string name, Type srcType, Type destType, Expression source)
+=======
+        public static Expression CreateConvertMethod(Type srcType, Type destType, Expression source)
+>>>>>>> refs/remotes/MapsterMapper/master
         {
+            var name = _primitiveTypes.GetValueOrDefault(destType);
+
+            if (name == null)
+                return null;
+
             var method = typeof (Convert).GetMethod(name, new[] {srcType});
             if (method != null)
                 return Expression.Call(method, source);
@@ -96,8 +161,9 @@ namespace Mapster
                 : null;
         }
 
-        public static Expression BuildUnderlyingTypeConvertExpression(Expression source, Type sourceType, Type destinationType)
+        public static Type UnwrapNullable(this Type type)
         {
+<<<<<<< HEAD
             var srcType = sourceType.IsNullable() ? sourceType.GetGenericArguments()[0] : sourceType;
             var destType = destinationType.IsNullable() ? destinationType.GetGenericArguments()[0] : destinationType;
 
@@ -190,32 +256,38 @@ namespace Mapster
 
             var changeTypeMethod = typeof (Convert).GetMethod("ChangeType", new[] {typeof (object), typeof (Type)});
             return Expression.Convert(Expression.Call(changeTypeMethod, Expression.Convert(source, typeof (object)), Expression.Constant(destType)), destType);
+=======
+            return type.IsNullable() ? type.GetGenericArguments()[0] : type;
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
-        public static MemberExpression GetMemberInfo(Expression method)
+        public static MemberExpression GetMemberInfo(Expression member, bool source = false)
         {
-            var lambda = method as LambdaExpression;
+            var lambda = member as LambdaExpression;
             if (lambda == null)
-                throw new ArgumentNullException(nameof(method));
+                throw new ArgumentNullException(nameof(member));
+
+            var expr = lambda.Body;
+            if (lambda.Body.NodeType == ExpressionType.Convert)
+                expr = ((UnaryExpression)lambda.Body).Operand;
 
             MemberExpression memberExpr = null;
-
-            if (lambda.Body.NodeType == ExpressionType.Convert)
+            if (expr.NodeType == ExpressionType.MemberAccess)
             {
-                memberExpr =
-                    ((UnaryExpression) lambda.Body).Operand as MemberExpression;
-            }
-            else if (lambda.Body.NodeType == ExpressionType.MemberAccess)
-            {
-                memberExpr = lambda.Body as MemberExpression;
+                var tmp = (MemberExpression) expr;
+                if (tmp.Expression.NodeType == ExpressionType.Parameter)
+                    memberExpr = tmp;
+                else if (!source)
+                    throw new ArgumentException("Only first level member access on destination allowed (eg. dest => dest.Name)", nameof(member));
             }
 
-            if (memberExpr == null)
-                throw new ArgumentException("argument must be member access", nameof(method));
+            if (memberExpr == null && !source)
+                throw new ArgumentException("Argument must be member access", nameof(member));
 
             return memberExpr;
         }
 
+<<<<<<< HEAD
         public static Expression GetDeepFlattening(Expression source, string propertyName, CompileArgument arg)
         {
             var strategy = arg.Settings.NameMatchingStrategy;
@@ -246,6 +318,8 @@ namespace Mapster
             return null;
         }
 
+=======
+>>>>>>> refs/remotes/MapsterMapper/master
         public static bool IsReferenceAssignableFrom(this Type destType, Type srcType)
         {
             if (destType == srcType)
@@ -259,10 +333,6 @@ namespace Mapster
 
         public static bool IsRecordType(this Type type)
         {
-            //not collection
-            if (type.IsCollection())
-                return false;
-
             //not nullable
             if (type.IsNullable())
                 return false;
@@ -282,8 +352,16 @@ namespace Mapster
                 return false;
 
             //all parameters should match getter
+<<<<<<< HEAD
             var names = props.Select(p => p.Name.ToPascalCase()).ToHashSet();
             return names.SetEquals(ctors[0].GetParameters().Select(p => p.Name.ToPascalCase()));
+=======
+            return props.All(prop =>
+            {
+                var name = prop.Name.ToPascalCase();
+                return ctors[0].GetParameters().Any(p => p.ParameterType == prop.Type && p.Name?.ToPascalCase() == name);
+            });
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         public static bool IsConvertible(this Type type)
@@ -291,17 +369,17 @@ namespace Mapster
             return typeof (IConvertible).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo());
         }
 
-        public static IMemberModel CreateModel(this PropertyInfo propertyInfo)
+        public static IMemberModelEx CreateModel(this PropertyInfo propertyInfo)
         {
             return new PropertyModel(propertyInfo);
         }
 
-        public static IMemberModel CreateModel(this FieldInfo propertyInfo)
+        public static IMemberModelEx CreateModel(this FieldInfo propertyInfo)
         {
             return new FieldModel(propertyInfo);
         }
 
-        public static IMemberModel CreateModel(this ParameterInfo propertyInfo)
+        public static IMemberModelEx CreateModel(this ParameterInfo propertyInfo)
         {
             return new ParameterModel(propertyInfo);
         }
@@ -336,5 +414,52 @@ namespace Mapster
         {
             return destinationType.GetInterface(type => type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>));
         }
+<<<<<<< HEAD
+=======
+
+        public static AccessModifier GetAccessModifier(this FieldInfo memberInfo)
+        {
+            if (memberInfo.IsFamilyOrAssembly)
+                return AccessModifier.Protected | AccessModifier.Internal;
+            if (memberInfo.IsFamily)
+                return AccessModifier.Protected;
+            if (memberInfo.IsAssembly)
+                return AccessModifier.Internal;
+            if (memberInfo.IsPublic)
+                return AccessModifier.Public;
+            return AccessModifier.Private;
+        }
+
+        public static AccessModifier GetAccessModifier(this MethodBase methodBase)
+        {
+            if (methodBase.IsFamilyOrAssembly)
+                return AccessModifier.Protected | AccessModifier.Internal;
+            if (methodBase.IsFamily)
+                return AccessModifier.Protected;
+            if (methodBase.IsAssembly)
+                return AccessModifier.Internal;
+            if (methodBase.IsPublic)
+                return AccessModifier.Public;
+            return AccessModifier.Private;
+        }
+
+        public static bool ShouldMapMember(this IMemberModel member, IEnumerable<Func<IMemberModel, MemberSide, bool?>> predicates, MemberSide side)
+        {
+            return predicates.Select(predicate => predicate(member, side))
+                .FirstOrDefault(result => result != null) == true;
+        }
+
+        public static string GetMemberName(this IMemberModel member, List<Func<IMemberModel, string>> getMemberNames, Func<string, string> nameConverter)
+        {
+            return getMemberNames.Select(predicate => predicate(member))
+                .FirstOrDefault(name => name != null)
+                ?? nameConverter(member.Name);
+        }
+
+        public static bool IsPrimitiveKind(this Type type)
+        {
+            return type == typeof(object) || type.UnwrapNullable().IsConvertible();
+        }
+>>>>>>> refs/remotes/MapsterMapper/master
     }
 }

@@ -1,17 +1,22 @@
-![Mapster Icon](http://www.fancyicons.com/free-icons/103/pretty-office-5/png/128/order_128.png)
+![Mapster Icon](https://cloud.githubusercontent.com/assets/5763993/26522718/d16f3e42-4330-11e7-9b78-f8c7402624e7.png)
 
-##Mapster - The Mapper of Your Domain
+## Mapster - The Mapper of Your Domain
+Writing mapping method is machine job. Do not waste your time, let Mapster do it.
 
+<<<<<<< HEAD
 [![Build status](https://ci.appveyor.com/api/projects/status/krpp0nhspmklom1d?svg=true)](https://ci.appveyor.com/project/eswann/mapster)
 
 ### Basic usage
 ```
 var result = original.Adapt<NewType>();
 ```
+=======
+>>>>>>> refs/remotes/MapsterMapper/master
 ### Get it
 ```
 PM> Install-Package Mapster
 ```
+<<<<<<< HEAD
 ###Get started
 
 [Mapping](#Mapping)
@@ -50,41 +55,33 @@ PM> Install-Package Mapster
 - [Passing runtime value](#RuntimeValue)
 - [Type-Specific Destination Transforms](#Transform)
 - [Custom Type Resolvers](#ConverterFactory)
+=======
+>>>>>>> refs/remotes/MapsterMapper/master
 
-[Validation](#Validate)
-- [Explicit Mapping](#ExplicitMapping)
-- [Checking Destination Member](#CheckDestinationMember)
-- [Validating Mappings](#Compile)
-
-####Mapping <a name="Mapping"></a>
-#####Mapping to a new object <a name="MappingNew"></a>
+### Basic usage
+#### Mapping to a new object
 Mapster creates the destination object and maps values to it.
 
-    var destObject = TypeAdapter.Adapt<TSource, TDestination>(sourceObject);
+    var destObject = sourceObject.Adapt<TDestination>();
 
-or just
-
-    var destObject = TypeAdapter.Adapt<TDestination>(sourceObject);
-
+<<<<<<< HEAD
 or using extension methods
 
     var destObject = sourceObject.Adapt<TDestination>();
 
 #####Mapping to an existing object <a name="MappingToTarget"></a>
+=======
+#### Mapping to an existing object
+>>>>>>> refs/remotes/MapsterMapper/master
 You make the object, Mapster maps to the object.
-
-    TDestination destObject = new TDestination();
-    destObject = TypeAdapter.Adapt(sourceObject, destObject);
-
-or using extension methods
 
     TDestination destObject = new TDestination();
     destObject = sourceObject.Adapt(destObject);
 
-#####Queryable Extensions <a name="Projection"></a>
+#### Queryable Extensions
 Mapster also provides extensions to map queryables.
 
-    using(MyDbContext context = new MyDbContext())
+    using (MyDbContext context = new MyDbContext())
     {
         // Build a Select Expression from DTO
         var destinations = context.Sources.ProjectToType<Destination>().ToList();
@@ -99,64 +96,14 @@ Mapster also provides extensions to map queryables.
         .ToList();
     }
 
-#####Mapper Instance <a name="UnitTest"></a>
-In some cases, you need an instance of a mapper (or a factory function) to pass into a DI container. Mapster has
-the IAdapter and Adapter to fill this need:
+### Performance
+Don't let other libraries slow you down, Mapster is at least twice faster!
 
-    IAdapter adapter = new Adapter();
+![image](https://cloud.githubusercontent.com/assets/5763993/26527206/bbde5490-43b8-11e7-8363-34644e5e709e.png)
 
-And usage is the same as with the static methods.
+### What's new in 3.0
 
-    var result = adapter.Adapt<TDestination>(source);
-
-####Conversion <a name="Conversion"></a>
-Mapster can map nearly all kind of objects. Here are some details.
-
-#####Conversion of immutable types <a name="ConversionImmutable"></a>
-Converting between primitive types (ie. int, string, bool, double, decimal) is supported, including when those types are nullable. For all other types, if you can cast types in c#, you can also cast in Mapster.
-
-    var i = TypeAdapter.Adapt<string, int>("123");  //123
-
-#####Conversion from/to enum <a name="ConversionEnum"></a>
-Mapster maps enums to numerics automatically, but it also maps strings to and from enums automatically in a fast manner.  
-The default Enum.ToString() in .Net is quite slow. The implementation in Mapster is double the speed.  
-Likewise, a fast conversion from strings to enums is also included.  If the string is null or empty,
-the enum will initialize to the first enum value.
-
-In Mapster 2.0, flagged enums are also supported.
-
-    var e = TypeAdapter.Adapt<string, FileShare>("Read, Write, Delete");  
-    //FileShare.Read | FileShare.Write | FileShare.Delete
-
-#####Mapping POCO <a name="ConversionPOCO"></a>
-Mapster can map 2 different POCO types using the following rules
-- Source and destination property names are the same. Ex: `dest.Name = src.Name`
-- Source has get method. Ex: `dest.Name = src.GetName()`
-- Source property has child object which can flatten to destination. Ex: `dest.ContactName = src.Contact.Name` or `dest.Contact_Name = src.Contact.Name`
-
-In Mapster 2.0, POCO structs are also supported.
-
-    class Staff {
-        public string Name { get; set; }
-        public int GetAge() { return (DateTime.Now - this.BirthDate).TotalDays / 365.25; }
-        public Staff Supervisor { get; set; }
-        ...
-    }
-
-    struct StaffDto {
-        public string Name { get; set; }
-        public int Age { get; set; }
-        public string SupervisorName { get; set; }
-    }
-
-    var dto = TypeAdapter.Adapt<Staff, StaffDto>(staff);  
-    //dto.Name = staff.Name, dto.Age = staff.GetAge(), dto.SupervisorName = staff.Supervisor.Name
-
-#####Mapping Lists <a name="ConversionList"></a>
-This includes mapping among lists, arrays, collections, dictionary including various interfaces: IList<T>, ICollection<T>, IEnumerable<T> etc...
-
-    var target = TypeAdapter.Adapt<List<Source>, IEnumerable<Destination>>(list);  
-
+<<<<<<< HEAD
 #####Conversion from/to Dictionary <a name="ConversionDictionary"></a>
 Mapster supports conversion from object to dictionary and dictionary to object.
 
@@ -503,12 +450,20 @@ Forcing all destination properties to have a corresponding source member or expl
 
 #####Validating Mappings <a name="Compile"></a>
 Both a specific TypeAdapterConfig<Source, Destination> or all current configurations can be validated. In addition, if Explicit Mappings (above) are enabled, it will also include errors for classes that are not registered at all with the mapper.
+=======
+Debugging generated mapping function!
+![image](https://cloud.githubusercontent.com/assets/5763993/26521773/180427b6-431b-11e7-9188-10c01fa5ba5c.png)
 
-    //Validate a specific config
-    var config = TypeAdapterConfig<Source, Destination>.NewConfig();
-    config.Compile();
+Mapping your DTOs directly to EF6!
+```
+var poco = dto.BuildAdapter()
+              .CreateEntityFromContext(db)
+              .AdaptToType<DomainPoco>();
+```
+>>>>>>> refs/remotes/MapsterMapper/master
 
-    //Validate globally
-    TypeAdapterConfig<Source, Destination>.NewConfig();
-    TypeAdapterConfig<Source2, Destination2>.NewConfig();
-    TypeAdapterConfig.GlobalSettings.Compile();
+### Change logs
+https://github.com/MapsterMapper/Mapster/releases
+
+### Usages
+https://github.com/MapsterMapper/Mapster/wiki

@@ -4,22 +4,20 @@ using System.Linq.Expressions;
 
 namespace Mapster
 {
-    public class TransformsCollection
+    public class TransformsCollection: IApplyable<TransformsCollection>
     {
         private readonly Dictionary<Type, LambdaExpression> _transforms = new Dictionary<Type, LambdaExpression>();
 
         public Expression<Func<T, T>> Get<T>()
         {
-            LambdaExpression found;
-            _transforms.TryGetValue(typeof(T), out found);
+            _transforms.TryGetValue(typeof(T), out var found);
 
             return (Expression<Func<T, T>>)found;
         }
 
         public LambdaExpression Get(Type type)
         {
-            LambdaExpression found;
-            _transforms.TryGetValue(type, out found);
+            _transforms.TryGetValue(type, out var found);
 
             return found;
         }
@@ -63,10 +61,16 @@ namespace Mapster
             _transforms.Clear();
         }
 
-        internal IDictionary<Type, LambdaExpression> Transforms
+        public void Apply(object other)
         {
-            get { return _transforms; }
-        } 
+            if (other is TransformsCollection collection)
+                Apply(collection);
+        }
+        public void Apply(TransformsCollection other)
+        {
+            this.TryAdd(other.Transforms);
+        }
 
+        internal IDictionary<Type, LambdaExpression> Transforms => _transforms;
     }
 }

@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Mapster.Models
 {
-    internal class FieldModel : IMemberModel
+    public class FieldModel : IMemberModelEx
     {
         private readonly FieldInfo _fieldInfo;
         public FieldModel(FieldInfo fieldInfo)
@@ -16,14 +16,23 @@ namespace Mapster.Models
         public Type Type => _fieldInfo.FieldType;
         public string Name => _fieldInfo.Name;
         public object Info => _fieldInfo;
+<<<<<<< HEAD
         public AccessModifier SetterModifier
         {
             get { return _fieldInfo.IsInitOnly ? AccessModifier.None : AccessModifier.Public; }
         }
+=======
+        public AccessModifier SetterModifier => _fieldInfo.IsInitOnly ? AccessModifier.None : _fieldInfo.GetAccessModifier();
+        public AccessModifier AccessModifier => _fieldInfo.GetAccessModifier();
+>>>>>>> refs/remotes/MapsterMapper/master
 
         public Expression GetExpression(Expression source)
         {
             return Expression.Field(source, _fieldInfo);
+        }
+        public Expression SetExpression(Expression source, Expression value)
+        {
+            return Expression.Assign(GetExpression(source), value);
         }
         public IEnumerable<object> GetCustomAttributes(bool inherit)
         {

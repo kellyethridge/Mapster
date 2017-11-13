@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+<<<<<<< HEAD
 using NUnit.Framework;
 
 namespace Mapster.Tests
@@ -12,11 +13,26 @@ namespace Mapster.Tests
     {
         [TearDown]
         public void TearDown()
+=======
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Mapster.Tests
+{
+    [TestClass]
+    public class WhenCompilingConfig
+    {
+        [TestCleanup]
+        public void TestCleanup()
+>>>>>>> refs/remotes/MapsterMapper/master
         {
             TypeAdapterConfig.GlobalSettings.Clear();
         }
 
+<<<<<<< HEAD
         [Test]
+=======
+        [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Compile_Success_When_Contain_Collection()
         {
             TypeAdapterConfig<SrcItem, DestItem>.ForType();

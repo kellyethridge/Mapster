@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+<<<<<<< HEAD
 using NUnit.Framework;
+=======
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class WhenMappingRecordTypes
     {
-        [Test]
+        [TestMethod]
         public void Map_Dictionary()
         {
             var source = new Dictionary<string, SimplePoco>
@@ -25,7 +29,7 @@ namespace Mapster.Tests
             dest["a"].Name.ShouldBe(source["a"].Name);
         }
 
-        [Test]
+        [TestMethod]
         public void Map_RecordType()
         {
             var source = new SimplePoco {Id = Guid.NewGuid(), Name = "bar"};

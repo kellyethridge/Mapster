@@ -1,23 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+<<<<<<< HEAD
 using NUnit.Framework;
+=======
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class WhenRegisteringAndMappingRace
     {
-        [TestFixtureTearDown]
-        public void TearDown()
+        [TestCleanup]
+        public void TestCleanup()
         {
             TypeAdapterConfig.GlobalSettings.RequireExplicitMapping = false;
             TypeAdapterConfig.GlobalSettings.RequireDestinationMemberSource = false;
         }
 
 
-        [Test]
+        [TestMethod]
         public void Types_Map_Successfully_If_Mapping_Applied_First()
         {
             TypeAdapterConfig.GlobalSettings.RequireDestinationMemberSource = true;
@@ -32,14 +36,14 @@ namespace Mapster.Tests
             TypeAdapter.Adapt<WhenAddingCustomMappings.SimplePoco, WeirdPoco>(simplePoco);
         }
 
-        [Test, Explicit]
+        [TestMethod, TestCategory("speed"), Ignore]
         public void Race_Condition_Produces_Error()
         {
             TypeAdapterConfig.GlobalSettings.RequireDestinationMemberSource = true;
 
             var simplePoco = new WhenAddingCustomMappings.SimplePoco {Id = Guid.NewGuid(), Name = "TestName"};
 
-            var exception = Assert.Throws<AggregateException>(() =>
+            var exception = Should.Throw<AggregateException>(() =>
             {
                 for (int i = 0; i < 100; i++)
                 {
@@ -56,11 +60,15 @@ namespace Mapster.Tests
                 }
             });
 
+<<<<<<< HEAD
             exception.InnerException.ShouldBeOfType(typeof(ArgumentOutOfRangeException));
+=======
+            exception.InnerException.ShouldBeOfType(typeof(CompileException));
+>>>>>>> refs/remotes/MapsterMapper/master
 
         }
 
-        [Test, Explicit]
+        [TestMethod, TestCategory("speed")]
         public void Explicit_Mapping_Requirement_Throws_Before_Mapping_Attempted()
         {
             TypeAdapterConfig.GlobalSettings.RequireExplicitMapping = true;
@@ -68,7 +76,7 @@ namespace Mapster.Tests
 
             var simplePoco = new WhenAddingCustomMappings.SimplePoco { Id = Guid.NewGuid(), Name = "TestName" };
 
-            Assert.Throws<AggregateException>(() =>
+            Should.Throw<AggregateException>(() =>
             {
                 for (int i = 0; i < 100; i++)
                 {

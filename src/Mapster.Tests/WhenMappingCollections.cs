@@ -2,12 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Mapster.Tests
 {
-    #region Test Objects
+    #region TestMethod Objects
 
     public class XProject
     {
@@ -72,12 +72,20 @@ namespace Mapster.Tests
 
     }
 
+    public class Foo
+    {
+        public List<Foo> Foos { get; set; }
+        public Foo[] FooArray { get; set; }
+        public IEnumerable<int> Ints { get; set; }
+        public int[] IntArray { get; set; }
+    }
+
     #endregion
 
-    [TestFixture]
+    [TestClass]
     public class WhenMappingCollections
     {
-        [Test]
+        [TestMethod]
         public void MapCollectionProperty()
         {
             var person = new Person()
@@ -142,7 +150,7 @@ namespace Mapster.Tests
             Assert.IsTrue(dto.RelatedDepartments.Length == 2 && dto.RelatedDepartments[0] == Departments.IT && dto.RelatedDepartments[1] == Departments.Finance);           
         }
 
-        [Test]
+        [TestMethod]
         public void MapCollection()
         {
             var person = new Person()
@@ -179,6 +187,25 @@ namespace Mapster.Tests
             Assert.IsNotNull(dtos[0].Projects);
 
             Assert.IsTrue(dtos[0].Projects.First().Id == 1 && dtos[0].Projects.First().Name == "Project X");
+        }
+
+        [TestMethod]
+        public void ShouldNotUsingTheSameEnumerable()
+        {
+            var src = new Foo
+            {
+                Foos = new List<Foo> { new Foo() },
+                FooArray = new[] { new Foo() },
+                Ints = new[] { 1, 2, 3 },
+                IntArray = new[] { 4, 5, 6 },
+            };
+            var dest = src.Adapt<Foo>();
+            Assert.IsFalse(src.Foos == dest.Foos);
+            Assert.IsFalse(src.Foos[0] == dest.Foos[0]);
+            Assert.IsFalse(src.FooArray == dest.FooArray);
+            Assert.IsFalse(src.FooArray[0] == dest.FooArray[0]);
+            Assert.IsFalse(src.Ints == dest.Ints);
+            Assert.IsFalse(src.IntArray == dest.IntArray);
         }
     }
 }

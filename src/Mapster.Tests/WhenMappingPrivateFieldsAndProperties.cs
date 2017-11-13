@@ -1,12 +1,23 @@
+<<<<<<< HEAD
 ﻿using NUnit.Framework;
+=======
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
+<<<<<<< HEAD
     [TestFixture]
     public class WhenMappingPrivateFieldsAndProperties
     {
         [Test]
+=======
+    [TestClass]
+    public class WhenMappingPrivateFieldsAndProperties
+    {
+        [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Default_Settings_Should_Not_Map_Private_Fields_To_New_Object()
         {
             TypeAdapterConfig<CustomerWithPrivateField, CustomerDTO>
@@ -19,12 +30,20 @@ namespace Mapster.Tests
 
             var dto = aCustomer.Adapt<CustomerDTO>();
 
+<<<<<<< HEAD
             Assert.NotNull(dto);
+=======
+            Assert.IsNotNull(dto);
+>>>>>>> refs/remotes/MapsterMapper/master
             dto.Id.ShouldNotBe(customerId);
             dto.Name.ShouldBe(customerName);
         }
 
+<<<<<<< HEAD
         [Test]
+=======
+        [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Default_Settings_Should_Not_Map_Private_Properties_To_New_Object()
         {
             var customerId = 1;
@@ -33,12 +52,20 @@ namespace Mapster.Tests
 
             var dto = aCustomer.Adapt<CustomerDTO>();
 
+<<<<<<< HEAD
             Assert.NotNull(dto);
+=======
+            Assert.IsNotNull(dto);
+>>>>>>> refs/remotes/MapsterMapper/master
             dto.Id.ShouldBe(customerId);
             dto.Name.ShouldNotBe(customerName);
         }
 
+<<<<<<< HEAD
         [Test]
+=======
+        [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Should_Map_Private_Field_To_New_Object_Correctly()
         {
             SetUpMappingNonPublicFields<CustomerWithPrivateField, CustomerDTO>();
@@ -49,12 +76,20 @@ namespace Mapster.Tests
 
             var dto = aCustomer.Adapt<CustomerDTO>();
 
+<<<<<<< HEAD
             Assert.NotNull(dto);
+=======
+            Assert.IsNotNull(dto);
+>>>>>>> refs/remotes/MapsterMapper/master
             dto.Id.ShouldBe(customerId);
             dto.Name.ShouldBe(customerName);
         }
 
+<<<<<<< HEAD
         [Test]
+=======
+        [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Should_Map_Private_Property_To_New_Object_Correctly()
         {
             SetUpMappingNonPublicProperties<CustomerWithPrivateProperty, CustomerDTO>();
@@ -65,12 +100,20 @@ namespace Mapster.Tests
 
             var dto = aCustomer.Adapt<CustomerDTO>();
 
+<<<<<<< HEAD
             Assert.NotNull(dto);
+=======
+            Assert.IsNotNull(dto);
+>>>>>>> refs/remotes/MapsterMapper/master
             dto.Id.ShouldBe(customerId);
             dto.Name.ShouldBe(customerName);
         }
 
+<<<<<<< HEAD
         [Test]
+=======
+        [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Should_Map_To_Private_Fields_Correctly()
         {
             SetUpMappingNonPublicFields<CustomerDTO, CustomerWithPrivateField>();
@@ -83,12 +126,20 @@ namespace Mapster.Tests
 
             var customer = dto.Adapt<CustomerWithPrivateField>();
 
+<<<<<<< HEAD
             Assert.NotNull(customer);
+=======
+            Assert.IsNotNull(customer);
+>>>>>>> refs/remotes/MapsterMapper/master
             Assert.IsTrue(customer.HasId(dto.Id));
             customer.Name.ShouldBe(dto.Name);            
         }
 
+<<<<<<< HEAD
         [Test]
+=======
+        [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Should_Map_To_Private_Properties_Correctly()
         {
             SetUpMappingNonPublicFields<CustomerDTO, CustomerWithPrivateProperty>();
@@ -101,7 +152,11 @@ namespace Mapster.Tests
 
             var customer = dto.Adapt<CustomerWithPrivateProperty>();
 
+<<<<<<< HEAD
             Assert.NotNull(customer);
+=======
+            Assert.IsNotNull(customer);
+>>>>>>> refs/remotes/MapsterMapper/master
             customer.Id.ShouldBe(dto.Id);
             Assert.IsTrue(customer.HasName(dto.Name));
         }
@@ -109,7 +164,11 @@ namespace Mapster.Tests
         private void SetUpMappingNonPublicFields<TSource, TDestination>()
         {
             var config = TypeAdapterConfig<TSource, TDestination>.NewConfig();
+<<<<<<< HEAD
             config.EnableNonPublicMembers();
+=======
+            config.EnableNonPublicMembers(true);
+>>>>>>> refs/remotes/MapsterMapper/master
             config.NameMatchingStrategy(NameMatchingStrategy.Flexible);
         }
 
@@ -117,11 +176,19 @@ namespace Mapster.Tests
         {
             TypeAdapterConfig<TSource, TDestination>
                   .NewConfig()
+<<<<<<< HEAD
                   .EnableNonPublicMembers();
 
         }
 
         #region Test Classes
+=======
+                  .EnableNonPublicMembers(true);
+
+        }
+
+        #region TestMethod Classes
+>>>>>>> refs/remotes/MapsterMapper/master
 
         public class CustomerWithPrivateField
         {

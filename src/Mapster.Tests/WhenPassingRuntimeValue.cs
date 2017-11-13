@@ -1,12 +1,23 @@
 ﻿using System;
+<<<<<<< HEAD
 using NUnit.Framework;
+=======
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
+<<<<<<< HEAD
     public class WhenPassingRuntimeValue
     {
         [Test]
+=======
+    [TestClass]
+    public class WhenPassingRuntimeValue
+    {
+        [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Passing_Runtime_Value()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()

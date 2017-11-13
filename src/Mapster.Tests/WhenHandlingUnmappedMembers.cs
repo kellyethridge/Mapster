@@ -1,21 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+<<<<<<< HEAD
 using NUnit.Framework;
+=======
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class WhenHandlingUnmappedMembers
     {
-        [TestFixtureTearDown]
-        public void TearDown()
+        [TestCleanup]
+        public void TestCleanup()
         {
             TypeAdapterConfig.GlobalSettings.RequireDestinationMemberSource = false;
         }
 
-        [Test]
+        [TestMethod]
         public void No_Errors_Thrown_With_Default_Configuration_On_Unmapped_Primitive()
         {
             TypeAdapterConfig.GlobalSettings.RequireDestinationMemberSource = false;
@@ -30,7 +34,7 @@ namespace Mapster.Tests
             simpleDto.UnmappedMember2.ShouldBe(0);
         }
 
-        [Test]
+        [TestMethod]
         public void Error_Thrown_With_Explicit_Configuration_On_Unmapped_Primitive()
         {
             try
@@ -42,13 +46,13 @@ namespace Mapster.Tests
 
                 TypeAdapter.Adapt<SimplePoco, SimpleDto>(source);
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (InvalidOperationException ex)
             {
-                ex.Message.ShouldContain("UnmappedMember");
+                ex.ToString().ShouldContain("UnmappedMember");
             }
         }
 
-        [Test]
+        [TestMethod]
         public void No_Errors_Thrown_With_Default_Configuration_On_Unmapped_Child_Collection()
         {
             TypeAdapterConfig.GlobalSettings.RequireDestinationMemberSource = false;
@@ -63,7 +67,7 @@ namespace Mapster.Tests
             destination.Children.Count.ShouldBe(1);
         }
 
-        [Test]
+        [TestMethod]
         public void Error_Thrown_With_Explicit_Configuration_On_Unmapped_Child_Collection()
         {
             try
@@ -76,9 +80,9 @@ namespace Mapster.Tests
                 TypeAdapter.Adapt<ParentPoco, ParentDto>(source);
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (InvalidOperationException ex)
             {
-                ex.Message.ShouldContain("UnmappedChildren");
+                ex.ToString().ShouldContain("UnmappedChildren");
             }
         }
 
