@@ -16,8 +16,15 @@ namespace Mapster.Models
         public Type Type => _fieldInfo.FieldType;
         public string Name => _fieldInfo.Name;
         public object Info => _fieldInfo;
+<<<<<<< HEAD
+        public AccessModifier SetterModifier
+        {
+            get { return _fieldInfo.IsInitOnly ? AccessModifier.None : AccessModifier.Public; }
+        }
+=======
         public AccessModifier SetterModifier => _fieldInfo.IsInitOnly ? AccessModifier.None : _fieldInfo.GetAccessModifier();
         public AccessModifier AccessModifier => _fieldInfo.GetAccessModifier();
+>>>>>>> refs/remotes/MapsterMapper/master
 
         public Expression GetExpression(Expression source)
         {

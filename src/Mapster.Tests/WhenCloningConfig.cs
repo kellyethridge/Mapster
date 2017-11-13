@@ -1,21 +1,37 @@
 ﻿using System;
 using System.Linq;
 using Mapster.Models;
+<<<<<<< HEAD
+using NUnit.Framework;
+=======
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
+<<<<<<< HEAD
+    [TestFixture]
+    public class WhenCloningConfig
+    {
+        [TearDown]
+        public void TearDown()
+=======
     [TestClass]
     public class WhenCloningConfig
     {
         [TestCleanup]
         public void TestCleanup()
+>>>>>>> refs/remotes/MapsterMapper/master
         {
             TypeAdapterConfig.GlobalSettings.Clear();
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Alter_Config_After_Map_Should_Error()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()
@@ -29,13 +45,21 @@ namespace Mapster.Tests
             var result = TypeAdapter.Adapt<SimpleDto>(poco);
             result.Name.ShouldBe("a");
 
+<<<<<<< HEAD
+            var ex = Assert.Throws<InvalidOperationException>(() =>
+=======
             var ex = Should.Throw<InvalidOperationException>(() =>
+>>>>>>> refs/remotes/MapsterMapper/master
                 TypeAdapterConfig<SimplePoco, SimpleDto>.ForType()
                     .Map(dest => dest.Name, src => "b"));
             ex.Message.ShouldContain("TypeAdapter.Adapt was already called");
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Clone()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()
@@ -80,7 +104,11 @@ namespace Mapster.Tests
         public class SimpleDto
         {
             public Guid Id { get; set; }
+<<<<<<< HEAD
+            public string Name { get; protected set; }
+=======
             public string Name { get; internal set; }
+>>>>>>> refs/remotes/MapsterMapper/master
         }
     }
 }

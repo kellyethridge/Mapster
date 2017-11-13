@@ -6,10 +6,17 @@ namespace Mapster.Adapters
 {
     internal class PrimitiveAdapter : BaseAdapter
     {
+<<<<<<< HEAD
+        protected override int Score => -200;
+        protected override bool CheckExplicitMapping => false;
+
+        protected override bool CanMap(Type sourceType, Type destinationType, MapType mapType)
+=======
         protected override int Score => -200;   //must do last
         protected override bool CheckExplicitMapping => false;
 
         protected override bool CanMap(PreCompileArgument arg)
+>>>>>>> refs/remotes/MapsterMapper/master
         {
             return true;
         }

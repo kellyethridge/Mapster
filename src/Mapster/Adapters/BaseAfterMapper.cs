@@ -1,4 +1,9 @@
+<<<<<<< HEAD
+﻿using System;
+using System.Linq.Expressions;
+=======
 ﻿using System.Linq.Expressions;
+>>>>>>> refs/remotes/MapsterMapper/master
 
 namespace Mapster.Adapters
 {
@@ -6,12 +11,21 @@ namespace Mapster.Adapters
     {
         protected virtual int Score => 0;
 
+<<<<<<< HEAD
+        public virtual int? Priority(Type sourceType, Type destinationType, MapType mapType)
+        {
+            return CanMap(sourceType, destinationType, mapType) ? this.Score : (int?)null;
+        }
+
+        protected abstract bool CanMap(Type sourceType, Type destinationType, MapType mapType);
+=======
         public virtual int? Priority(PreCompileArgument arg)
         {
             return CanMap(arg) ? this.Score : (int?)null;
         }
 
         protected abstract bool CanMap(PreCompileArgument arg);
+>>>>>>> refs/remotes/MapsterMapper/master
 
         public LambdaExpression CreateAfterMapFunc(CompileArgument arg)
         {

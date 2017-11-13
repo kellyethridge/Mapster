@@ -38,12 +38,17 @@ namespace Mapster.Utils
 
         public static Expression To(this Expression exp, Type type, bool force = false)
         {
+<<<<<<< HEAD
+=======
             exp = exp.TrimConversion();
+>>>>>>> refs/remotes/MapsterMapper/master
             bool sameType = force ? type == exp.Type : type.IsReferenceAssignableFrom(exp.Type);
             if (sameType)
                 return exp;
             else
                 return Expression.Convert(exp, type);
+<<<<<<< HEAD
+=======
         }
 
         public static Delegate Compile(this LambdaExpression exp, CompileArgument arg)
@@ -176,6 +181,7 @@ namespace Mapster.Utils
             );
 
             return loop;
+>>>>>>> refs/remotes/MapsterMapper/master
         }
     }
 }

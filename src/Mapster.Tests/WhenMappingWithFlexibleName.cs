@@ -1,18 +1,34 @@
+<<<<<<< HEAD
+﻿using NUnit.Framework;
+=======
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
+<<<<<<< HEAD
+    [TestFixture]
+    public class WhenMappingWithFlexibleName
+    {
+        [TearDown]
+        public void TearDown()
+=======
     [TestClass]
     public class WhenMappingWithFlexibleName
     {
         [TestCleanup]
         public void TestCleanup()
+>>>>>>> refs/remotes/MapsterMapper/master
         {
             TypeAdapterConfig.GlobalSettings.Clear();
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Not_Set_Match_Only_Exact_Name()
         {
             var mix = new MixName
@@ -35,7 +51,11 @@ namespace Mapster.Tests
             simple.MixUnder_SCORE.ShouldBeNull();
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Map_Flexible_Name()
         {
             TypeAdapterConfig<MixName, SimpleName>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.Flexible);
@@ -60,6 +80,9 @@ namespace Mapster.Tests
             simple.MixUnder_SCORE.ShouldBe(mix.MIX_UnderScore);
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
         public void Map_IgnoreCase()
         {
@@ -76,6 +99,7 @@ namespace Mapster.Tests
         }
 
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Test_Name()
         {
             NameMatchingStrategy.PascalCase("PascalCase").ShouldBe("PascalCase");
@@ -88,6 +112,19 @@ namespace Mapster.Tests
             NameMatchingStrategy.PascalCase("__MixMIXMix_mix").ShouldBe("MixMixMixMix");
         }
 
+        [Test]
+        public void Test_Name()
+        {
+            NameMatchingStrategy.ToPascalCase("PascalCase").ShouldEqual("PascalCase");
+            NameMatchingStrategy.ToPascalCase("camelCase").ShouldEqual("CamelCase");
+            NameMatchingStrategy.ToPascalCase("lower_case").ShouldEqual("LowerCase");
+            NameMatchingStrategy.ToPascalCase("UPPER_CASE").ShouldEqual("UpperCase");
+            NameMatchingStrategy.ToPascalCase("IPAddress").ShouldEqual("IpAddress");
+            NameMatchingStrategy.ToPascalCase("ItemID").ShouldEqual("ItemId");
+            NameMatchingStrategy.ToPascalCase("__under__SCORE__").ShouldEqual("UnderScore");
+            NameMatchingStrategy.ToPascalCase("__MixMIXMix_mix").ShouldEqual("MixMixMixMix");
+        }
+
         public class MixName
         {
             public string PascalCase { get; set; }
@@ -96,7 +133,10 @@ namespace Mapster.Tests
             public string lower_case { get; set; }
             public string UPPER_CASE { get; set; }
             public string MIX_UnderScore { get; set; }
+<<<<<<< HEAD
+=======
             public string FOOBAR { get; set; }
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         public class SimpleName
@@ -107,7 +147,10 @@ namespace Mapster.Tests
             public string LowerCase { get; set; }
             public string UpperCase { get; set; }
             public string MixUnder_SCORE { get; set; }
+<<<<<<< HEAD
+=======
             public string FooBar { get; set; }
+>>>>>>> refs/remotes/MapsterMapper/master
         }
     }
 }

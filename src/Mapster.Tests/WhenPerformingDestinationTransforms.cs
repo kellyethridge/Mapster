@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+<<<<<<< HEAD
+using NUnit.Framework;
+=======
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
@@ -36,7 +40,11 @@ namespace Mapster.Tests
             var source = new SimplePoco {Id = new Guid(), Name = "TestMethod"};
             var destination = TypeAdapter.Adapt<SimpleDto>(source);
 
+<<<<<<< HEAD
+            destination.Name.ShouldBe("Test");
+=======
             destination.Name.ShouldBe("TestMethod");
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         [TestMethod]
@@ -49,7 +57,11 @@ namespace Mapster.Tests
             var source = new SimplePoco { Id = new Guid(), Name = "TestMethod    " };
             var destination = TypeAdapter.Adapt<SimplePoco, SimpleDto>(source);
 
+<<<<<<< HEAD
+            destination.Name.ShouldBe("Test");
+=======
             destination.Name.ShouldBe("TestMethod");
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
 

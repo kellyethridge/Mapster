@@ -3,6 +3,19 @@ using System.Reflection;
 
 namespace Mapster
 {
+<<<<<<< HEAD
+    public interface IAdapter
+    {
+        TypeAdapterBuiler<TSource> BuildAdapter<TSource>(TSource source);
+        TDestination Adapt<TDestination>(object source);
+        TDestination Adapt<TSource, TDestination>(TSource source);
+        TDestination Adapt<TSource, TDestination>(TSource source, TDestination destination);
+        object Adapt(object source, Type sourceType, Type destinationType);
+        object Adapt(object source, object destination, Type sourceType, Type destinationType);
+    }
+
+=======
+>>>>>>> refs/remotes/MapsterMapper/master
     public class Adapter : IAdapter
     {
         readonly TypeAdapterConfig _config;
@@ -14,9 +27,15 @@ namespace Mapster
             _config = config;
         }
 
+<<<<<<< HEAD
+        public TypeAdapterBuiler<TSource> BuildAdapter<TSource>(TSource source)
+        {
+            return new TypeAdapterBuiler<TSource>(source, _config);
+=======
         public TypeAdapterBuilder<TSource> BuildAdapter<TSource>(TSource source)
         {
             return new TypeAdapterBuilder<TSource>(source, _config);
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         public TDestination Adapt<TDestination>(object source)

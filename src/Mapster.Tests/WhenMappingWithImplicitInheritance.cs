@@ -1,7 +1,12 @@
 ﻿using System;
+<<<<<<< HEAD
+using NUnit.Framework;
+using Shouldly;
+=======
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shouldly;
 using Mapster.Models;
+>>>>>>> refs/remotes/MapsterMapper/master
 
 namespace Mapster.Tests
 {
@@ -123,9 +128,15 @@ namespace Mapster.Tests
 
         //    var dto = TypeAdapter.Adapt<SimpleDto>(source);
 
+<<<<<<< HEAD
+            dto.Id.ShouldBe(source.Id);
+            dto.Name.ShouldBe(source.Name);
+        }
+=======
         //    dto.Id.ShouldBe(source.Id);
         //    dto.Name.ShouldBe(source.Name);
         //}
+>>>>>>> refs/remotes/MapsterMapper/master
 
         [TestMethod]
         public void Base_Configuration_Applies_To_Double_Derived_Class_If_No_Explicit_Configuration()

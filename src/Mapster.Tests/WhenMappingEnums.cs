@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+<<<<<<< HEAD
+using NUnit.Framework;
+=======
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
@@ -85,6 +89,8 @@ namespace Mapster.Tests
             dto.Id.ShouldBe(employee.Id);
             dto.Name.ShouldBe(employee.Name);
             dto.Department.ShouldBe(Departments.IT);
+<<<<<<< HEAD
+=======
         }
 
         [TestMethod]
@@ -132,6 +138,7 @@ namespace Mapster.Tests
             dto.Id.ShouldBe(employee.Id);
             dto.Name.ShouldBe(employee.Name);
             dto.Department.ShouldBe(Departments.IT);
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         [TestMethod]

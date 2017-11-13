@@ -5,14 +5,24 @@ namespace Mapster
 {
     public static class TypeAdapter
     {
+<<<<<<< HEAD
+        public static TypeAdapterBuiler<TSource> BuildAdapter<TSource>(this TSource source)
+=======
         public static TypeAdapterBuilder<TSource> BuildAdapter<TSource>(this TSource source)
+>>>>>>> refs/remotes/MapsterMapper/master
         {
             return BuildAdapter(source, TypeAdapterConfig.GlobalSettings);
         }
 
+<<<<<<< HEAD
+        public static TypeAdapterBuiler<TSource> BuildAdapter<TSource>(this TSource source, TypeAdapterConfig config)
+        {
+            return new TypeAdapterBuiler<TSource>(source, config);
+=======
         public static TypeAdapterBuilder<TSource> BuildAdapter<TSource>(this TSource source, TypeAdapterConfig config)
         {
             return new TypeAdapterBuilder<TSource>(source, config);
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         /// <summary>
@@ -37,9 +47,14 @@ namespace Mapster
         {
             if (source == null)
                 return default(TDestination);
+<<<<<<< HEAD
+            dynamic fn = config.GetMapFunction(source.GetType(), typeof(TDestination));
+            return (TDestination)fn((dynamic)source);
+=======
             var type = source.GetType();
             var fn = config.GetDynamicMapFunction<TDestination>(type);
             return fn(source);
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         /// <summary>

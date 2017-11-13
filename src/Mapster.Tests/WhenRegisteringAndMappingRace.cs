@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+<<<<<<< HEAD
+using NUnit.Framework;
+=======
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
@@ -56,7 +60,11 @@ namespace Mapster.Tests
                 }
             });
 
+<<<<<<< HEAD
+            exception.InnerException.ShouldBeOfType(typeof(ArgumentOutOfRangeException));
+=======
             exception.InnerException.ShouldBeOfType(typeof(CompileException));
+>>>>>>> refs/remotes/MapsterMapper/master
 
         }
 
