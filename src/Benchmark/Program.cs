@@ -17,7 +17,10 @@ namespace Benchmark
         private static double TotalMapsterTime;
         private static double TotalExpressMapperTime;
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> refs/remotes/MapsterMapper/master
         private static void Main(string[] args)
         {
             try
@@ -112,10 +115,17 @@ namespace Benchmark
 
             //Test(customer, 10000000);
 
+<<<<<<< HEAD
+            Console.WriteLine();
+            Console.WriteLine("Automapper to Mapster ratio: " + (AutomapperTime/MapsterTime).ToString("###.00") + " X slower");
+            Console.WriteLine("ExpressMapper to Mapster ratio: " + (ExpressMapperTime/MapsterTime).ToString("###.00") + " X slower");
+            Console.WriteLine();
+=======
             //Console.WriteLine();
             //Console.WriteLine("Automapper to Mapster ratio: " + (AutomapperTime/MapsterTime).ToString("###.00") + " X slower");
             //Console.WriteLine("ExpressMapper to Mapster ratio: " + (ExpressMapperTime/MapsterTime).ToString("###.00") + " X slower");
             //Console.WriteLine();
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         private static void Test(Customer item, int iterations)
@@ -189,6 +199,19 @@ namespace Benchmark
         }
 
 
+<<<<<<< HEAD
+        private static void TestValueInjecter<TSrc, TDest>(TSrc item, int iterations)
+            where TSrc : class
+            where TDest : class, new()
+        {
+            if (iterations > 50000)
+                Console.WriteLine("ValueInjecter still working please wait...");
+
+            Console.WriteLine("ValueInjecter:\t\t" + Loop<TSrc>(item, get => new TDest().InjectFrom<FastDeepCloneInjection>(item), iterations));
+        }
+
+=======
+>>>>>>> refs/remotes/MapsterMapper/master
         private static void TestExpressMapper<TSrc, TDest>(TSrc item, int iterations)
             where TSrc : class
             where TDest : class, new()

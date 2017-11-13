@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Mapster.Utils;
+using System.Linq;
 
 namespace Mapster.Adapters
 {
@@ -12,12 +13,21 @@ namespace Mapster.Adapters
         protected virtual int Score => 0;
         protected virtual bool CheckExplicitMapping => true;
 
+<<<<<<< HEAD
+        public virtual int? Priority(Type sourceType, Type destinationType, MapType mapType)
+        {
+            return CanMap(sourceType, destinationType, mapType) ? this.Score : (int?)null;
+        }
+
+        protected abstract bool CanMap(Type sourceType, Type destinationType, MapType mapType);
+=======
         public virtual int? Priority(PreCompileArgument arg)
         {
             return CanMap(arg) ? this.Score : (int?)null;
         }
 
         protected abstract bool CanMap(PreCompileArgument arg);
+>>>>>>> refs/remotes/MapsterMapper/master
 
         public LambdaExpression CreateAdaptFunc(CompileArgument arg)
         {
@@ -53,17 +63,39 @@ namespace Mapster.Adapters
 
         protected virtual bool CanInline(Expression source, Expression destination, CompileArgument arg)
         {
+<<<<<<< HEAD
+            if (arg.MapType == MapType.MapToTarget)
+                return false;
+            if (arg.Settings.IgnoreMembers.Any(item => item.Value != null))
+                return false;
+            var constructUsing = arg.Settings.ConstructUsingFactory?.Invoke(arg);
+            if (constructUsing != null &&
+                constructUsing.Body.NodeType != ExpressionType.New &&
+                constructUsing.Body.NodeType != ExpressionType.MemberInit)
+            {
+                    if (arg.MapType == MapType.Projection)
+                        throw new InvalidOperationException(
+                            $"Input ConstructUsing is invalid for projection: TSource: {arg.SourceType} TDestination: {arg.DestinationType}");
+                    return false;
+            }
+=======
             //PreserveReference, AfterMapping, Includes aren't supported by Projection
             if (arg.MapType == MapType.Projection)
                 return true;
 
+>>>>>>> refs/remotes/MapsterMapper/master
             if (arg.Settings.PreserveReference == true &&
                 !arg.SourceType.GetTypeInfo().IsValueType &&
                 !arg.DestinationType.GetTypeInfo().IsValueType)
                 return false;
+<<<<<<< HEAD
+            if (arg.Settings.AfterMappingFactories.Count > 0 &&
+                arg.MapType != MapType.Projection)
+=======
             if (arg.Settings.AfterMappingFactories.Count > 0)
                 return false;
             if (arg.Settings.Includes.Count > 0)
+>>>>>>> refs/remotes/MapsterMapper/master
                 return false;
             return true;
         }
@@ -72,6 +104,17 @@ namespace Mapster.Adapters
         {
             if (this.CheckExplicitMapping
                 && arg.Context.Config.RequireExplicitMapping
+<<<<<<< HEAD
+                && !arg.Context.Config.RuleMap.ContainsKey(new TypeTuple(arg.SourceType, arg.DestinationType)))
+            {
+                throw new InvalidOperationException(
+                    $"Implicit mapping is not allowed (check GlobalSettings.RequireExplicitMapping) and no configuration exists for the following mapping: TSource: {arg.SourceType} TDestination: {arg.DestinationType}");
+            }
+
+            return CanInline(source, destination, arg)
+                ? CreateInlineExpressionBody(source, arg).To(arg.DestinationType, true)
+                : CreateBlockExpressionBody(source, destination, arg);
+=======
                 && !arg.ExplicitMapping)
             {
                 throw new InvalidOperationException("Implicit mapping is not allowed (check GlobalSettings.RequireExplicitMapping) and no configuration exists");
@@ -83,11 +126,27 @@ namespace Mapster.Adapters
                 return null;
             else
                 return CreateBlockExpressionBody(source, destination, arg);
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         protected Expression CreateBlockExpressionBody(Expression source, Expression destination, CompileArgument arg)
         {
             if (arg.MapType == MapType.Projection)
+<<<<<<< HEAD
+                throw new InvalidOperationException(
+                    $"Mapping is invalid for projection: TSource: {arg.SourceType} TDestination: {arg.DestinationType}");
+
+            var result = Expression.Variable(arg.DestinationType);
+            Expression assign = Expression.Assign(result, destination ?? CreateInstantiationExpression(source, arg));
+
+            var set = CreateBlockExpression(source, result, arg);
+
+            if (arg.Settings.AfterMappingFactories.Count > 0)
+            {
+                //var result = adapt(source);
+                //action(source, result);
+
+=======
                 throw new InvalidOperationException("Mapping is invalid for projection");
 
             //var result = new TDest();
@@ -101,6 +160,7 @@ namespace Mapster.Adapters
             //action(source, result);
             if (arg.Settings.AfterMappingFactories.Count > 0)
             {
+>>>>>>> refs/remotes/MapsterMapper/master
                 var actions = new List<Expression> { set };
 
                 foreach (var afterMappingFactory in arg.Settings.AfterMappingFactories)
@@ -123,6 +183,8 @@ namespace Mapster.Adapters
                 set = Expression.Block(actions);
             }
 
+<<<<<<< HEAD
+=======
             //using (var scope = new MapContextScope()) {
             //  var references = scope.Context.Reference;
             //  object cache;
@@ -134,6 +196,7 @@ namespace Mapster.Adapters
             //      result.prop = adapt(source.prop);
             //  }
             //}
+>>>>>>> refs/remotes/MapsterMapper/master
             if (arg.Settings.PreserveReference == true &&
                 !arg.SourceType.GetTypeInfo().IsValueType &&
                 !arg.DestinationType.GetTypeInfo().IsValueType)
@@ -141,8 +204,12 @@ namespace Mapster.Adapters
                 var scope = Expression.Variable(typeof(MapContextScope), "scope");
                 var newScope = Expression.Assign(scope, Expression.New(typeof(MapContextScope)));
 
+<<<<<<< HEAD
+                var dict = Expression.Variable(typeof(Dictionary<object, object>));
+=======
                 var dictType = typeof(Dictionary<object, object>);
                 var dict = Expression.Variable(dictType, "references");
+>>>>>>> refs/remotes/MapsterMapper/master
                 var refContext = Expression.Property(scope, "Context");
                 var refDict = Expression.Property(refContext, "References");
                 var assignDict = Expression.Assign(dict, refDict);
@@ -273,6 +340,12 @@ namespace Mapster.Adapters
         {
             //new TDestination()
 
+<<<<<<< HEAD
+            var constructUsing = arg.Settings.ConstructUsingFactory?.Invoke(arg);
+            return constructUsing != null
+                ? constructUsing.Apply(source).TrimConversion().To(arg.DestinationType)
+                : Expression.New(arg.DestinationType);
+=======
             //if there is constructUsing, use constructUsing
             var constructUsing = arg.Settings.ConstructUsingFactory?.Invoke(arg);
             Expression newObj;
@@ -301,6 +374,7 @@ namespace Mapster.Adapters
             return destination == null
                 ? newObj
                 : Expression.Coalesce(destination, newObj);
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         protected Expression CreateAdaptExpression(Expression source, Type destinationType, CompileArgument arg)

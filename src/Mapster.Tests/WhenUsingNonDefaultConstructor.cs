@@ -1,5 +1,9 @@
 ﻿using System;
+<<<<<<< HEAD
+using NUnit.Framework;
+=======
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
@@ -42,12 +46,20 @@ namespace Mapster.Tests
             dto.Unmapped.ShouldBe("unmapped");
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Construct_From_Interface()
         {
             TypeAdapterConfig<SimplePoco, ISimpleDtoWithDefaultConstructor>.NewConfig()
                 .IgnoreNullValues(true)
+<<<<<<< HEAD
+                .ConstructUsing(src => new SimpleDtoWithDefaultConstructor {Unmapped = "unmapped"})
+=======
                 .ConstructUsing(src => new SimpleDtoWithDefaultConstructor { Unmapped = "unmapped" })
+>>>>>>> refs/remotes/MapsterMapper/master
                 .Compile();
 
             var simplePoco = new SimplePoco { Id = Guid.NewGuid(), Name = "TestName" };

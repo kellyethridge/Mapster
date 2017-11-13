@@ -12,6 +12,16 @@ namespace Mapster.Adapters
     {
         protected override int Score => -125;
         protected override bool CheckExplicitMapping => false;
+<<<<<<< HEAD
+
+        protected override bool CanMap(Type sourceType, Type destinationType, MapType mapType)
+        {
+            return sourceType.IsCollection()
+                   && destinationType.IsCollection()
+                   && destinationType.IsListCompatible();
+        }
+=======
+>>>>>>> refs/remotes/MapsterMapper/master
 
         protected override bool CanMap(PreCompileArgument arg)
         {
@@ -50,7 +60,11 @@ namespace Mapster.Adapters
                 return Expression.New(listType);            //new List<T>()
             var ctor = (from c in listType.GetConstructors()
                         let args = c.GetParameters()
+<<<<<<< HEAD
+                        where args.Length == 1 && args[0].ParameterType == typeof (int)
+=======
                         where args.Length == 1 && args[0].ParameterType == typeof(int)
+>>>>>>> refs/remotes/MapsterMapper/master
                         select c).FirstOrDefault();
             if (ctor == null)
                 return Expression.New(listType);            //new List<T>()
@@ -60,6 +74,30 @@ namespace Mapster.Adapters
 
         protected override Expression CreateBlockExpression(Expression source, Expression destination, CompileArgument arg)
         {
+<<<<<<< HEAD
+            if (destination.Type.IsArray)
+            {
+                if (source.Type.IsArray && source.Type.GetElementType() == destination.Type.GetElementType())
+                {
+                    //Array.Copy(src, 0, dest, 0, src.Length)
+                    var method = typeof (Array).GetMethod("Copy", new[] {typeof (Array), typeof (int), typeof (Array), typeof (int), typeof (int)});
+                    return Expression.Call(method, source, Expression.Constant(0), destination, Expression.Constant(0), Expression.ArrayLength(source));
+                }
+                else
+                    return CreateArraySet(source, destination, arg);
+            }
+            else
+            {
+                var destinationElementType = destination.Type.ExtractCollectionType();
+                var listType = destination.Type.GetGenericEnumerableType() != null
+                    ? typeof(ICollection<>).MakeGenericType(destinationElementType)
+                    : typeof(IList);
+                var tmp = Expression.Variable(listType);
+                var assign = ExpressionEx.Assign(tmp, destination); //convert to list type
+                var set = CreateListSet(source, tmp, arg);
+                return Expression.Block(new[] {tmp}, assign, set);
+            }
+=======
             var destinationElementType = destination.Type.ExtractCollectionType();
             var listType = destination.Type.GetGenericEnumerableType() != null
                 ? typeof(ICollection<>).MakeGenericType(destinationElementType)
@@ -68,6 +106,7 @@ namespace Mapster.Adapters
             var assign = ExpressionEx.Assign(tmp, destination); //convert to list type
             var set = CreateListSet(source, tmp, arg);
             return Expression.Block(new[] { tmp }, assign, set);
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         protected override Expression CreateInlineExpression(Expression source, CompileArgument arg)

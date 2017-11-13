@@ -7,6 +7,72 @@ namespace Mapster
 {
     public class TypeAdapterSettings: SettingStore
     {
+<<<<<<< HEAD
+        Map,
+        InlineMap,
+        MapToTarget,
+        Projection,
+    }
+
+    public class TypeAdapterSettings
+    {
+        public Dictionary<string, LambdaExpression> IgnoreMembers { get; internal set; } = new Dictionary<string, LambdaExpression>();
+        public HashSet<Type> IgnoreAttributes { get; internal set; } = new HashSet<Type>();
+        public TransformsCollection DestinationTransforms { get; internal set; } = new TransformsCollection();
+        public NameMatchingStrategy NameMatchingStrategy { get; internal set; } = new NameMatchingStrategy();
+
+        public bool? PreserveReference { get; set; }
+        public bool? ShallowCopyForSameType { get; set; }
+        public bool? IgnoreNullValues { get; set; }
+        public bool? NoInherit { get; set; }
+        public Type DestinationType { get; set; }
+
+        public List<Func<Expression, IMemberModel, CompileArgument, Expression>> ValueAccessingStrategies { get; internal set; } = new List<Func<Expression, IMemberModel, CompileArgument, Expression>>();
+        public List<InvokerModel> Resolvers { get; internal set; } = new List<InvokerModel>();
+        public Func<CompileArgument, LambdaExpression> ConstructUsingFactory { get; set; }
+        public Func<CompileArgument, LambdaExpression> ConverterFactory { get; set; }
+        public Func<CompileArgument, LambdaExpression> ConverterToTargetFactory { get; set; }
+        public List<Func<CompileArgument, LambdaExpression>> AfterMappingFactories { get; internal set; } = new List<Func<CompileArgument, LambdaExpression>>();
+
+        internal bool Compiled { get; set; }
+
+        public void Apply(TypeAdapterSettings other)
+        {
+            if (this.NoInherit == null)
+                this.NoInherit = other.NoInherit;
+
+            if (this.NoInherit == true)
+            {
+                if (this.DestinationType != null && other.DestinationType != null)
+                    return;
+            }
+
+            if (this.PreserveReference == null)
+                this.PreserveReference = other.PreserveReference;
+            if (this.ShallowCopyForSameType == null)
+                this.ShallowCopyForSameType = other.ShallowCopyForSameType;
+            if (this.IgnoreNullValues == null)
+                this.IgnoreNullValues = other.IgnoreNullValues;
+
+            foreach (var member in other.IgnoreMembers)
+            {
+                this.IgnoreMembers[member.Key] = member.Value;
+            }
+            this.IgnoreAttributes.UnionWith(other.IgnoreAttributes);
+            this.NameMatchingStrategy.Apply(other.NameMatchingStrategy);
+            this.DestinationTransforms.TryAdd(other.DestinationTransforms.Transforms);
+            this.AfterMappingFactories.AddRange(other.AfterMappingFactories);
+
+            this.ValueAccessingStrategies.AddRange(other.ValueAccessingStrategies);
+            this.Resolvers.AddRange(other.Resolvers);
+
+            if (this.ConstructUsingFactory == null)
+                this.ConstructUsingFactory = other.ConstructUsingFactory;
+            if (this.ConverterFactory == null)
+                this.ConverterFactory = other.ConverterFactory;
+            if (this.ConverterToTargetFactory == null)
+                this.ConverterToTargetFactory = other.ConverterToTargetFactory;
+=======
         public IgnoreIfDictionary IgnoreIfs
         {
             get => Get("IgnoreIfs", () => new IgnoreIfDictionary());
@@ -90,6 +156,7 @@ namespace Mapster
         {
             get => Get<Func<CompileArgument, LambdaExpression>>("ConverterToTargetFactory");
             set => Set("ConverterToTargetFactory", value);
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         internal bool Compiled { get; set; }

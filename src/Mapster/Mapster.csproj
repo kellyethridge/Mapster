@@ -61,6 +61,17 @@
     <Compile Include="Adapters\BaseAdapter.cs" />
     <Compile Include="Adapters\BaseAfterMapper.cs" />
     <Compile Include="Adapters\BaseClassAdapter.cs" />
+<<<<<<< HEAD
+    <Compile Include="Adapters\ClassWithNonPublicMemberAdapter.cs" />
+    <Compile Include="Adapters\DictionaryAdapter.cs" />
+    <Compile Include="Adapters\RecordTypeAdapter.cs" />
+    <Compile Include="IRegister.cs" />
+    <Compile Include="MapContext.cs" />
+    <Compile Include="NameMatchingStrategy.cs" />
+    <Compile Include="TypeAdapterBuiler.cs" />
+    <Compile Include="ValueAccessingStrategy.cs" />
+    <Compile Include="Models\AccessModifier.cs" />
+=======
     <Compile Include="Adapters\DelegateAdapter.cs" />
     <Compile Include="Adapters\DictionaryAdapter.cs" />
     <Compile Include="Adapters\EnumAdapter.cs" />
@@ -96,6 +107,7 @@
     <Compile Include="Utils\ReferenceComparer.cs" />
     <Compile Include="Settings\ValueAccessingStrategy.cs" />
     <Compile Include="Enums\AccessModifier.cs" />
+>>>>>>> refs/remotes/MapsterMapper/master
     <Compile Include="Utils\BlockExpressionDetector.cs" />
     <Compile Include="Models\ClassMapping.cs" />
     <Compile Include="Models\ClassModel.cs" />
@@ -121,6 +133,10 @@
     <Compile Include="Utils\ReflectionUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
+    <None Include="Mapster.nuspec" />
+=======
+>>>>>>> refs/remotes/MapsterMapper/master
     <None Include="Mapster.snk" />
   </ItemGroup>
   <ItemGroup />

@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+<<<<<<< HEAD
+using NUnit.Framework;
+=======
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
@@ -16,14 +20,22 @@ namespace Mapster.Tests
                 .Compile();
 
             IAdapter instance = TypeAdapter.GetInstance();
+<<<<<<< HEAD
+            var source = new SimplePoco {Id = new Guid(), Name = "Test"};
+=======
             var source = new SimplePoco {Id = new Guid(), Name = "TestMethod"};
+>>>>>>> refs/remotes/MapsterMapper/master
 
             var destination = instance.Adapt<SimpleDto>(source);
 
             destination.Name.ShouldBe(source.Name);
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void False_Condition_Primitive_Does_Not_Map()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()

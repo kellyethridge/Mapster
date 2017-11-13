@@ -16,6 +16,29 @@ namespace Mapster.Models
         public Type Type => _propertyInfo.PropertyType;
         public virtual string Name => _propertyInfo.Name;
         public object Info => _propertyInfo;
+<<<<<<< HEAD
+
+        public AccessModifier SetterModifier
+        {
+            get
+            {
+                var setter = _propertyInfo.GetSetMethod();
+                if (setter == null)
+                    return AccessModifier.None;
+
+                if (setter.IsFamilyOrAssembly)
+                    return AccessModifier.Protected | AccessModifier.Internal;
+                if (setter.IsFamily)
+                    return AccessModifier.Protected;
+                if (setter.IsAssembly)
+                    return AccessModifier.Internal;
+                if (setter.IsPublic)
+                    return AccessModifier.Public;
+                return AccessModifier.Private;
+            }
+        }
+=======
+>>>>>>> refs/remotes/MapsterMapper/master
 
         public AccessModifier SetterModifier
         {

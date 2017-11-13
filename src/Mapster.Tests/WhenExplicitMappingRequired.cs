@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+<<<<<<< HEAD
+using NUnit.Framework;
+=======
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
 
+<<<<<<< HEAD
+    [TestFixture]
+=======
     [TestClass]
+>>>>>>> refs/remotes/MapsterMapper/master
     public class WhenExplicitMappingRequired
     {
         [TestCleanup]
@@ -53,7 +61,11 @@ namespace Mapster.Tests
             simpleDto.Name.ShouldBe(simpleEnumPoco.Name.ToString());
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Mapped_Classes_With_Mapped_Enum_Compiles()
         {
             TypeAdapterConfig.GlobalSettings.RequireExplicitMapping = true;
@@ -67,7 +79,11 @@ namespace Mapster.Tests
             simpleDto.Name.ShouldBe(simpleEnumPoco.Name.ToString());
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Mapped_Classes_Succeed()
         {
             TypeAdapterConfig.GlobalSettings.RequireExplicitMapping = true;
@@ -81,7 +97,11 @@ namespace Mapster.Tests
             simpleDto.Name.ShouldBe(simplePoco.Name);
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Mapped_List_Of_Classes_Succeed()
         {
             TypeAdapterConfig.GlobalSettings.RequireExplicitMapping = true;
@@ -99,7 +119,11 @@ namespace Mapster.Tests
             simpleDtos[0].Name.ShouldBe(simplePocos[0].Name);
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Mapped_Classes_Succeed_With_Child_Mapping()
         {
             TypeAdapterConfig.GlobalSettings.RequireExplicitMapping = true;
@@ -114,7 +138,11 @@ namespace Mapster.Tests
             collectionDto.Name.ShouldBe(collectionPoco.Name);
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Mapped_Classes_Succeed_When_List_To_IList_Is_Mapped()
         {
             TypeAdapterConfig.GlobalSettings.RequireExplicitMapping = true;

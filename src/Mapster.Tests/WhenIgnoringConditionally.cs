@@ -1,15 +1,27 @@
+<<<<<<< HEAD
+﻿using NUnit.Framework;
+=======
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
 {
+<<<<<<< HEAD
+    [TestFixture]
+=======
     [TestClass]
+>>>>>>> refs/remotes/MapsterMapper/master
     public class WhenIgnoringConditionally
     {
 
         #region Tests
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void True_Constant_Ignores_Map()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()
@@ -23,7 +35,11 @@ namespace Mapster.Tests
             dto.Name.ShouldBeNull();
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void True_Constant_Ignores_Map_To_Target()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()
@@ -38,7 +54,11 @@ namespace Mapster.Tests
             dto.Name.ShouldBe("DtoName");
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void True_Condition_Ignores_Map()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()
@@ -52,7 +72,11 @@ namespace Mapster.Tests
             dto.Name.ShouldBeNull();
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void True_Condition_Ignores_Map_To_Target()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()
@@ -67,7 +91,11 @@ namespace Mapster.Tests
             dto.Name.ShouldBe("DtoName");
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Null_Condition_Ignores_Map()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()
@@ -81,7 +109,11 @@ namespace Mapster.Tests
             dto.Name.ShouldBeNull();
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void Null_Condition_Ignores_Map_To_Target()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()
@@ -96,7 +128,11 @@ namespace Mapster.Tests
             dto.Name.ShouldBe("DtoName");
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void True_Condition_On_Target_Ignores_Map()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()
@@ -110,7 +146,11 @@ namespace Mapster.Tests
             dto.Name.ShouldBe("TestName");
         }
 
+<<<<<<< HEAD
+        [Test]
+=======
         [TestMethod]
+>>>>>>> refs/remotes/MapsterMapper/master
         public void True_Condition_On_Target_Ignores_Map_To_Target()
         {
             TypeAdapterConfig<SimplePoco, SimpleDto>.NewConfig()
@@ -125,6 +165,8 @@ namespace Mapster.Tests
             dto.Name.ShouldBe("DtoName");
         }
 
+<<<<<<< HEAD
+=======
         [TestMethod]
         public void False_Condition_Does_Not_Ignore()
         {
@@ -170,6 +212,7 @@ namespace Mapster.Tests
             dto.Name.ShouldBeNull();
         }
 
+>>>>>>> refs/remotes/MapsterMapper/master
         #endregion
 
 
@@ -187,6 +230,8 @@ namespace Mapster.Tests
             public string Name { get; set; }
         }
 
+<<<<<<< HEAD
+=======
         public class SimpleRecord
         {
             public int Id { get; }
@@ -199,6 +244,7 @@ namespace Mapster.Tests
             }
         }
 
+>>>>>>> refs/remotes/MapsterMapper/master
         #endregion
 
     }

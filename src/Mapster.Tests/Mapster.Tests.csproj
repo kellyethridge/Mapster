@@ -41,6 +41,15 @@
     <AssemblyOriginatorKeyFile>Mapster.Tests.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Shouldly, Version=2.6.0.0, Culture=neutral, PublicKeyToken=6042cbcb05cbc941, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shouldly.2.6.0\lib\net40\Shouldly.dll</HintPath>
+      <Private>True</Private>
+=======
     <Reference Include="ExpressionDebugger, Version=1.0.2.0, Culture=neutral, PublicKeyToken=b4df16a241f24dde, processorArchitecture=MSIL">
       <HintPath>..\packages\ExpressionDebugger.1.0.2\lib\net45\ExpressionDebugger.dll</HintPath>
     </Reference>
@@ -49,6 +58,7 @@
     </Reference>
     <Reference Include="Shouldly, Version=2.8.2.0, Culture=neutral, PublicKeyToken=6042cbcb05cbc941, processorArchitecture=MSIL">
       <HintPath>..\packages\Shouldly.2.8.2\lib\net451\Shouldly.dll</HintPath>
+>>>>>>> refs/remotes/MapsterMapper/master
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -70,6 +80,13 @@
     <Compile Include="Classes\Customer.cs" />
     <Compile Include="Classes\Product.cs" />
     <Compile Include="Classes\TypeTestClass.cs" />
+<<<<<<< HEAD
+    <Compile Include="WhenCloningConfig.cs" />
+    <Compile Include="WhenCompilingConfig.cs" />
+    <Compile Include="WhenCreatingConfigInstance.cs" />
+    <Compile Include="WhenIgnoringConditionally.cs" />
+    <Compile Include="WhenMappingDerived.cs" />
+=======
     <Compile Include="Diagnostics\DebugInfoInjectorEx.cs" />
     <Compile Include="Diagnostics\GlobalReference.cs" />
     <Compile Include="Diagnostics\TypeAdapterConfigExtensions.cs" />
@@ -85,16 +102,21 @@
     <Compile Include="WhenMappingDerived.cs" />
     <Compile Include="WhenMappingArrays.cs" />
     <Compile Include="WhenMappingIEnumerableClass.cs" />
+>>>>>>> refs/remotes/MapsterMapper/master
     <Compile Include="WhenMappingPrivateFieldsAndProperties.cs" />
     <Compile Include="WhenMappingWithDictionary.cs" />
     <Compile Include="WhenMappingRecordTypes.cs" />
     <Compile Include="WhenMappingIgnoreNullValues.cs" />
     <Compile Include="WhenMappingWithExtensionMethods.cs" />
     <Compile Include="WhenMappingWithFlexibleName.cs" />
+<<<<<<< HEAD
+    <Compile Include="WhenPerformingAfterMapping.cs" />
+=======
     <Compile Include="WhenMappingWithGetMethod.cs" />
     <Compile Include="WhenMappingWithOpenGenerics.cs" />
     <Compile Include="WhenPerformingAfterMapping.cs" />
     <Compile Include="WhenPassingRuntimeValue.cs" />
+>>>>>>> refs/remotes/MapsterMapper/master
     <Compile Include="WhenPreserveReferences.cs" />
     <Compile Include="WhenAddingCustomMappings.cs" />
     <Compile Include="WhenHandlingUnmappedMembers.cs" />
@@ -126,7 +148,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Mapster.Tests.snk" />
+<<<<<<< HEAD
+=======
     <EmbeddedResource Include="mock.keys" />
+>>>>>>> refs/remotes/MapsterMapper/master
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

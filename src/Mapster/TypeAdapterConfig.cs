@@ -7,21 +7,42 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Mapster.Adapters;
 using Mapster.Utils;
+<<<<<<< HEAD
+=======
 using System.Runtime.CompilerServices;
+>>>>>>> refs/remotes/MapsterMapper/master
 
 namespace Mapster
 {
     public class TypeAdapterConfig
     {
         public static List<TypeAdapterRule> RulesTemplate { get; } = CreateRuleTemplate();
+<<<<<<< HEAD
+        public static List<Func<Expression, IMemberModel, CompileArgument, Expression>> ValueAccessingStrategiesTemplate { get; } = ValueAccessingStrategy.GetDefaultStrategies();
+
+        private static TypeAdapterConfig _globalSettings;
+
+        public static TypeAdapterConfig GlobalSettings
+        {
+            get { return _globalSettings ?? (_globalSettings = new TypeAdapterConfig()); }
+        }
+=======
 
         private static TypeAdapterConfig _globalSettings;
         public static TypeAdapterConfig GlobalSettings => _globalSettings ?? (_globalSettings = new TypeAdapterConfig());
+>>>>>>> refs/remotes/MapsterMapper/master
 
         private static List<TypeAdapterRule> CreateRuleTemplate()
         {
             return new List<TypeAdapterRule>
             {
+<<<<<<< HEAD
+                new PrimitiveAdapter().CreateRule(),
+                new RecordTypeAdapter().CreateRule(),
+                new ClassAdapter().CreateRule(),
+                new DictionaryAdapter().CreateRule(),
+                new CollectionAdapter().CreateRule(),
+=======
                 new PrimitiveAdapter().CreateRule(),    //-200
                 new ClassAdapter().CreateRule(),        //-150
                 new RecordTypeAdapter().CreateRule(),   //-149
@@ -60,10 +81,17 @@ namespace Mapster
                         }
                     }
                 },
+>>>>>>> refs/remotes/MapsterMapper/master
 
                 //dictionary accessor
                 new TypeAdapterRule
                 {
+<<<<<<< HEAD
+                    Priority = (srcType, destType, mapType) => srcType.GetDictionaryType()?.GetGenericArguments()[0] == typeof(string) ? -149 : (int?)null,
+                    Settings = new TypeAdapterSettings
+                    {
+                        ValueAccessingStrategies = new[] { ValueAccessingStrategy.Dictionary }.ToList(),
+=======
                     Priority = arg => arg.SourceType.GetDictionaryType()?.GetGenericArguments()[0] == typeof(string) ? -124 : (int?)null,
                     Settings = new TypeAdapterSettings
                     {
@@ -72,6 +100,7 @@ namespace Mapster
                             ValueAccessingStrategy.CustomResolverForDictionary,
                             ValueAccessingStrategy.Dictionary,
                         },
+>>>>>>> refs/remotes/MapsterMapper/master
                     }
                 }
             };
@@ -80,6 +109,12 @@ namespace Mapster
         public bool RequireDestinationMemberSource { get; set; }
         public bool RequireExplicitMapping { get; set; }
         public bool AllowImplicitDestinationInheritance { get; set; }
+<<<<<<< HEAD
+
+        public List<TypeAdapterRule> Rules { get; protected set; }
+        public TypeAdapterSetter Default { get; protected set; }
+        public Dictionary<TypeTuple, TypeAdapterRule> RuleMap { get; protected set; } = new Dictionary<TypeTuple, TypeAdapterRule>();
+=======
         public bool AllowImplicitSourceInheritance { get; set; } = true;
 
         internal static Func<LambdaExpression, Delegate> DefaultCompiler = lambda => lambda.Compile();
@@ -88,15 +123,28 @@ namespace Mapster
         public List<TypeAdapterRule> Rules { get; internal set; }
         public TypeAdapterSetter Default { get; internal set; }
         public Dictionary<TypeTuple, TypeAdapterRule> RuleMap { get; internal set; } = new Dictionary<TypeTuple, TypeAdapterRule>();
+>>>>>>> refs/remotes/MapsterMapper/master
 
         public TypeAdapterConfig()
         {
             this.Rules = RulesTemplate.ToList();
+<<<<<<< HEAD
+            var settings = new TypeAdapterSettings
+            {
+                ValueAccessingStrategies = ValueAccessingStrategiesTemplate.ToList(),
+                NameMatchingStrategy = NameMatchingStrategy.Exact,
+            };
+            this.Default = new TypeAdapterSetter(settings, this);
+            this.Rules.Add(new TypeAdapterRule
+            {
+                Priority = (sourceType, destinationType, mapType) => -100,
+=======
             var settings = new TypeAdapterSettings();
             this.Default = new TypeAdapterSetter(settings, this);
             this.Rules.Add(new TypeAdapterRule
             {
                 Priority = arg => -100,
+>>>>>>> refs/remotes/MapsterMapper/master
                 Settings = settings,
             });
         }
@@ -128,6 +176,27 @@ namespace Mapster
             Remove(typeof(TSource), typeof(TDestination));
             return ForType<TSource, TDestination>();
         }
+<<<<<<< HEAD
+
+        public TypeAdapterSetter<TSource, TDestination> ForType<TSource, TDestination>()
+        {
+            var key = new TypeTuple(typeof(TSource), typeof(TDestination));
+            var settings = GetSettings(key);
+            return new TypeAdapterSetter<TSource, TDestination>(settings, this);
+        }
+
+        public TypeAdapterSetter<TDestination> ForDestinationType<TDestination>()
+        {
+            var key = new TypeTuple(typeof(void), typeof(TDestination));
+            var settings = GetSettings(key);
+            return new TypeAdapterSetter<TDestination>(settings, this);
+        }
+
+        private TypeAdapterSettings GetSettings(TypeTuple key)
+        {
+            TypeAdapterRule rule;
+            if (!this.RuleMap.TryGetValue(key, out rule))
+=======
 
         public TypeAdapterSetter NewConfig(Type sourceType, Type destinationType)
         {
@@ -159,6 +228,7 @@ namespace Mapster
         private TypeAdapterSettings GetSettings(TypeTuple key)
         {
             if (!this.RuleMap.TryGetValue(key, out var rule))
+>>>>>>> refs/remotes/MapsterMapper/master
             {
                 lock (this.RuleMap)
                 {
@@ -179,17 +249,33 @@ namespace Mapster
         {
             return new TypeAdapterRule
             {
+<<<<<<< HEAD
+                Priority = (sourceType, destinationType, mapType) =>
+                {
+                    var score1 = GetSubclassDistance(destinationType, key.Destination, this.AllowImplicitDestinationInheritance);
+                    if (score1 == null)
+                        return null;
+                    var score2 = GetSubclassDistance(sourceType, key.Source, true);
+=======
                 Priority = arg =>
                 {
                     var score1 = GetSubclassDistance(arg.DestinationType, key.Destination, this.AllowImplicitDestinationInheritance);
                     if (score1 == null)
                         return null;
                     var score2 = GetSubclassDistance(arg.SourceType, key.Source, this.AllowImplicitSourceInheritance);
+>>>>>>> refs/remotes/MapsterMapper/master
                     if (score2 == null)
                         return null;
                     return score1.Value + score2.Value;
                 },
+<<<<<<< HEAD
+                Settings = new TypeAdapterSettings
+                {
+                    DestinationType = key.Destination,
+                },
+=======
                 Settings = new TypeAdapterSettings(),
+>>>>>>> refs/remotes/MapsterMapper/master
             };
         }
 
@@ -197,8 +283,16 @@ namespace Mapster
         {
             return new TypeAdapterRule
             {
+<<<<<<< HEAD
+                Priority = (sourceType, destinationType, mapType) => GetSubclassDistance(destinationType, key.Destination, true),
+                Settings = new TypeAdapterSettings
+                {
+                    DestinationType = key.Destination,
+                },
+=======
                 Priority = arg => GetSubclassDistance(arg.DestinationType, key.Destination, true),
                 Settings = new TypeAdapterSettings(),
+>>>>>>> refs/remotes/MapsterMapper/master
             };
         }
 
@@ -238,6 +332,19 @@ namespace Mapster
             return score;
         }
 
+<<<<<<< HEAD
+        private readonly Hashtable _mapDict = new Hashtable();
+
+        internal Func<TSource, TDestination> GetMapFunction<TSource, TDestination>()
+        {
+            var key = new TypeTuple(typeof(TSource), typeof(TDestination));
+            object del = _mapDict[key] ?? AddToHash(_mapDict, key, CreateMapFunction);
+
+            return (Func<TSource, TDestination>)del;
+        }
+
+=======
+>>>>>>> refs/remotes/MapsterMapper/master
         private object AddToHash(Hashtable hash, TypeTuple key, Func<TypeTuple, object> func)
         {
             lock (hash)
@@ -249,18 +356,26 @@ namespace Mapster
                 del = func(key);
                 hash[key] = del;
 
+<<<<<<< HEAD
+                var settings = GetSettings(key);
+                settings.Compiled = true;
+=======
                 this.RuleMap.TryGetValue(key, out var rule);
                 if (rule != null)
                     rule.Settings.Compiled = true;
+>>>>>>> refs/remotes/MapsterMapper/master
                 return del;
             }
         }
 
+<<<<<<< HEAD
+=======
         private readonly Hashtable _mapDict = new Hashtable();
         public Func<TSource, TDestination> GetMapFunction<TSource, TDestination>()
         {
             return (Func<TSource, TDestination>)GetMapFunction(typeof(TSource), typeof(TDestination));
         }
+>>>>>>> refs/remotes/MapsterMapper/master
         internal Delegate GetMapFunction(Type sourceType, Type destinationType)
         {
             var key = new TypeTuple(sourceType, destinationType);
@@ -270,10 +385,21 @@ namespace Mapster
         }
 
         private readonly Hashtable _mapToTargetDict = new Hashtable();
+<<<<<<< HEAD
+
+        internal Func<TSource, TDestination, TDestination> GetMapToTargetFunction<TSource, TDestination>()
+        {
+            var key = new TypeTuple(typeof(TSource), typeof(TDestination));
+            object del = _mapToTargetDict[key] ?? AddToHash(_mapToTargetDict, key, CreateMapToTargetFunction);
+
+            return (Func<TSource, TDestination, TDestination>)del;
+=======
         public Func<TSource, TDestination, TDestination> GetMapToTargetFunction<TSource, TDestination>()
         {
             return (Func<TSource, TDestination, TDestination>)GetMapToTargetFunction(typeof(TSource), typeof(TDestination));
+>>>>>>> refs/remotes/MapsterMapper/master
         }
+
         internal Delegate GetMapToTargetFunction(Type sourceType, Type destinationType)
         {
             var key = new TypeTuple(sourceType, destinationType);
@@ -283,12 +409,18 @@ namespace Mapster
         }
 
         private readonly Hashtable _projectionDict = new Hashtable();
+
         internal Expression<Func<TSource, TDestination>> GetProjectionExpression<TSource, TDestination>()
         {
             var del = GetProjectionCallExpression(typeof(TSource), typeof(TDestination));
 
+<<<<<<< HEAD
+            return (Expression<Func<TSource, TDestination>>)((UnaryExpression)((MethodCallExpression)del).Arguments[1]).Operand;
+=======
             return (Expression<Func<TSource, TDestination>>)((UnaryExpression)del.Arguments[1]).Operand;
+>>>>>>> refs/remotes/MapsterMapper/master
         }
+
         internal MethodCallExpression GetProjectionCallExpression(Type sourceType, Type destinationType)
         {
             var key = new TypeTuple(sourceType, destinationType);
@@ -300,12 +432,32 @@ namespace Mapster
         private Hashtable _dynamicMapDict;
         internal Func<object, TDestination> GetDynamicMapFunction<TDestination>(Type sourceType)
         {
+<<<<<<< HEAD
+            var context = new CompileContext(this);
+            context.Running.Add(tuple);
+            try
+            {
+                var result = CreateMapExpression(tuple.Source, tuple.Destination, MapType.Map, context);
+                var compiled = result.Compile();
+                if (this == GlobalSettings)
+                {
+                    var field = typeof(TypeAdapter<,>).MakeGenericType(tuple.Source, tuple.Destination).GetField("Map");
+                    field.SetValue(null, compiled);
+                }
+                return compiled;
+            }
+            finally
+            {
+                context.Running.Remove(tuple);
+            }
+=======
             if (_dynamicMapDict == null)
                 _dynamicMapDict = new Hashtable();
             var key = new TypeTuple(sourceType, typeof(TDestination));
             object del = _dynamicMapDict[key] ?? AddToHash(_dynamicMapDict, key, tuple => Compiler(CreateDynamicMapExpression(tuple)));
 
             return (Func<object, TDestination>)del;
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         internal LambdaExpression CreateMapExpression(TypeTuple tuple, MapType mapType)
@@ -325,6 +477,25 @@ namespace Mapster
 
         private MethodCallExpression CreateProjectionCallExpression(TypeTuple tuple)
         {
+<<<<<<< HEAD
+            var context = new CompileContext(this);
+            context.Running.Add(tuple);
+            try
+            {
+                var lambda = CreateMapExpression(tuple.Source, tuple.Destination, MapType.Projection, context);
+                var source = Expression.Parameter(typeof(IQueryable<>).MakeGenericType(tuple.Source));
+                var methodInfo = (from method in typeof(Queryable).GetMethods()
+                                  where method.Name == "Select"
+                                  let p = method.GetParameters()[1]
+                                  where p.ParameterType.GetGenericArguments()[0].GetGenericTypeDefinition() == typeof(Func<,>)
+                                  select method).First().MakeGenericMethod(tuple.Source, tuple.Destination);
+                return Expression.Call(methodInfo, source, Expression.Quote(lambda));
+            }
+            finally
+            {
+                context.Running.Remove(tuple);
+            }
+=======
             var lambda = CreateMapExpression(tuple, MapType.Projection);
             var source = Expression.Parameter(typeof(IQueryable<>).MakeGenericType(tuple.Source));
             var methodInfo = (from method in typeof(Queryable).GetMethods()
@@ -333,6 +504,7 @@ namespace Mapster
                                 where p.ParameterType.GetGenericArguments()[0].GetGenericTypeDefinition() == typeof(Func<,>)
                                 select method).First().MakeGenericMethod(tuple.Source, tuple.Destination);
             return Expression.Call(methodInfo, source, Expression.Quote(lambda));
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         private static LambdaExpression CreateMapExpression(CompileArgument arg, bool allowNull = false)
@@ -414,8 +586,13 @@ namespace Mapster
             }
             else
             {
+<<<<<<< HEAD
+                var method = (from m in typeof(TypeAdapterConfig).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
+                              where m.Name == "GetMapFunction"
+=======
                 var method = (from m in typeof(TypeAdapterConfig).GetMethods(BindingFlags.Instance | BindingFlags.Public)
                               where m.Name == nameof(TypeAdapterConfig.GetMapFunction)
+>>>>>>> refs/remotes/MapsterMapper/master
                               select m).First().MakeGenericMethod(sourceType, destinationType);
                 invoker = Expression.Call(Expression.Constant(this), method);
             }
@@ -484,14 +661,23 @@ namespace Mapster
             var keys = RuleMap.Keys.ToList();
             foreach (var key in keys)
             {
+<<<<<<< HEAD
+                _mapDict[key] = CreateMapFunction(key);
+                _mapToTargetDict[key] = CreateMapToTargetFunction(key);
+=======
                 _mapDict[key] = Compiler(CreateMapExpression(key, MapType.Map));
                 _mapToTargetDict[key] = Compiler(CreateMapExpression(key, MapType.MapToTarget));
+>>>>>>> refs/remotes/MapsterMapper/master
             }
         }
 
         public void Compile(Type sourceType, Type destinationType)
         {
             var tuple = new TypeTuple(sourceType, destinationType);
+<<<<<<< HEAD
+            _mapDict[tuple] = CreateMapFunction(tuple);
+            _mapToTargetDict[tuple] = CreateMapToTargetFunction(tuple);
+=======
             _mapDict[tuple] = Compiler(CreateMapExpression(tuple, MapType.Map));
             _mapToTargetDict[tuple] = Compiler(CreateMapExpression(tuple, MapType.MapToTarget));
             if (this == GlobalSettings)
@@ -499,6 +685,7 @@ namespace Mapster
                 var field = typeof(TypeAdapter<,>).MakeGenericType(sourceType, destinationType).GetField("Map");
                 field.SetValue(null, _mapDict[tuple]);
             }
+>>>>>>> refs/remotes/MapsterMapper/master
         }
 
         public void CompileProjection()
@@ -565,7 +752,12 @@ namespace Mapster
 
         private void Remove(TypeTuple key)
         {
+<<<<<<< HEAD
+            TypeAdapterRule rule;
+            if (this.RuleMap.TryGetValue(key, out rule))
+=======
             if (this.RuleMap.TryGetValue(key, out var rule))
+>>>>>>> refs/remotes/MapsterMapper/master
             {
                 this.RuleMap.Remove(key);
                 this.Rules.Remove(rule);
@@ -573,22 +765,34 @@ namespace Mapster
             _mapDict.Remove(key);
             _mapToTargetDict.Remove(key);
             _projectionDict.Remove(key);
+<<<<<<< HEAD
+        }
+
+        private static TypeAdapterConfig _cloneConfig;
+
+=======
             _dynamicMapDict?.Remove(key);
         }
 
         private static TypeAdapterConfig _cloneConfig;
+>>>>>>> refs/remotes/MapsterMapper/master
         public TypeAdapterConfig Clone()
         {
             if (_cloneConfig == null)
             {
                 _cloneConfig = new TypeAdapterConfig();
                 _cloneConfig.Default.Settings.PreserveReference = true;
+<<<<<<< HEAD
+=======
                 _cloneConfig.ForType<TypeAdapterSettings, TypeAdapterSettings>()
                     .MapWith(src => src.Clone(), true);
+>>>>>>> refs/remotes/MapsterMapper/master
             }
             var fn = _cloneConfig.GetMapFunction<TypeAdapterConfig, TypeAdapterConfig>();
             return fn(this);
         }
+<<<<<<< HEAD
+=======
 
         private Hashtable _inlineConfigs;
         public TypeAdapterConfig Fork(Action<TypeAdapterConfig> action,
@@ -620,6 +824,7 @@ namespace Mapster
             }
             return (TypeAdapterConfig)config;
         }
+>>>>>>> refs/remotes/MapsterMapper/master
     }
 
     public static class TypeAdapterConfig<TSource, TDestination>

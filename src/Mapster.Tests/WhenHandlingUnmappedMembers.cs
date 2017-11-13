@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+<<<<<<< HEAD
+using NUnit.Framework;
+=======
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+>>>>>>> refs/remotes/MapsterMapper/master
 using Shouldly;
 
 namespace Mapster.Tests
